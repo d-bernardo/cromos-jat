@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Panini 2026 – Sticker Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230e1118'/><text y='68' x='50' text-anchor='middle' font-size='60'>⚽</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230e1118'/><text y='68' x='50' text-anchor='middle' font-size='60'>⚽</text></svg>">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JAT Cromos">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e1118">
+<link rel="manifest" href="data:application/json,{%22name%22:%22JAT%20Cromos%20-%20Panini%202026%22,%22short_name%22:%22JAT%20Cromos%22,%22description%22:%22Panini%20FIFA%20World%20Cup%202026%20Sticker%20Tracker%22,%22start_url%22:%22./%22,%22display%22:%22standalone%22,%22background_color%22:%22%230e1118%22,%22theme_color%22:%22%230e1118%22,%22orientation%22:%22portrait%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'><rect%20width='100'%20height='100'%20rx='20'%20fill='%230e1118'/><text%20y='68'%20x='50'%20text-anchor='middle'%20font-size='60'>⚽</text></svg>%22,%22sizes%22:%22any%22,%22type%22:%22image/svg+xml%22}]}">
+<style>
+:root{
+  --bg:#0e1118;--bg2:#161b27;--bg3:#1c2233;--bg4:#222a3f;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);
+  --text:#f0ede6;--text2:#8e97b0;--text3:#4e576e;
+  --gold:#e8c84a;--gold-dim:rgba(232,200,74,0.15);--gold-b:rgba(232,200,74,0.45);
+  --green:#4caf76;--green-dim:rgba(76,175,118,0.15);--green-b:rgba(76,175,118,0.45);
+  --red:#d94f3d;--red-dim:rgba(217,79,61,0.15);
+  --blue:#4a8fd4;--blue-dim:rgba(74,143,212,0.15);--blue-b:rgba(74,143,212,0.4);
+  --accent:#c93b2a;--accent2:#2f6fab;--cream:#d4c9a8;
+  --r:10px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;touch-action:manipulation}
+
+/* ONBOARDING SCREEN */
+#onboarding{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
+.ob-card{background:var(--bg2);border:1px solid rgba(74,143,212,0.25);border-radius:16px;padding:32px;width:100%;max-width:380px;box-shadow:0 0 40px rgba(10,12,20,0.9)}
+.ob-logo{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--cream);margin-bottom:4px}
+.ob-logo small{display:block;font-size:12px;color:var(--text2);letter-spacing:3px;font-family:'Barlow',sans-serif;font-weight:400;margin-top:-2px}
+.ob-card h2{font-family:'Bebas Neue',sans-serif;font-size:20px;margin:20px 0 6px}
+.ob-card p{font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5}
+.ob-input{width:100%;padding:10px 14px;border:1px solid var(--border2);border-radius:8px;font-size:14px;background:var(--bg3);color:var(--text);font-family:'Barlow',sans-serif;outline:none;margin-bottom:10px}
+.ob-input:focus{border-color:var(--accent2)}
+.ob-input::placeholder{color:var(--text3)}
+.ob-divider{display:flex;align-items:center;gap:10px;margin:16px 0;font-size:12px;color:var(--text3)}
+.ob-divider::before,.ob-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.btn-gold{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;margin-bottom:8px}
+.btn-outline{width:100%;padding:11px;background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:8px;font-size:14px;cursor:pointer;font-family:'Barlow',sans-serif}
+.btn-gold:active,.btn-outline:active{opacity:.8}
+.ob-err{font-size:12px;color:var(--red);margin-top:-4px;margin-bottom:8px;display:none}
+
+/* MAIN APP */
+#app{display:none}
+header{background:linear-gradient(135deg,#0e1118 0%,#161b27 60%,#1c2233 100%);border-bottom:1px solid rgba(74,143,212,0.2);position:sticky;top:0;z-index:100}
+.hi{max-width:1200px;margin:0 auto;padding:8px 14px;display:flex;align-items:center;gap:10px}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--cream);line-height:1;white-space:nowrap}
+.logo small{display:block;font-size:9px;color:var(--text2);letter-spacing:2px;margin-top:1px;font-family:'Barlow',sans-serif;font-weight:400}
+.ht{flex:1;min-width:0}
+.ht h1{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ht p{font-size:10px;color:var(--text2);margin-top:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-actions{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.upill{display:flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border2);border-radius:30px;padding:4px 10px 4px 5px;cursor:pointer;transition:border-color .2s}
+.upill:hover{border-color:var(--accent2)}
+.uav{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;flex-shrink:0}
+.upill span{font-size:11px;color:var(--text2)}
+.friends-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--text2);cursor:pointer;font-family:'Barlow',sans-serif;transition:all .2s;white-space:nowrap}
+.friends-btn:hover{border-color:var(--blue);color:var(--blue)}
+
+/* TABS */
+.tabs{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;gap:4px;border-bottom:1px solid var(--border);background:var(--bg2)}
+.tab{padding:8px 16px;font-size:12px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;font-family:'Barlow',sans-serif}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--cream);border-bottom-color:var(--accent)}
+
+/* STATS */
+.sw{max-width:1200px;margin:16px auto 0;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.sc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:10px}
+.si2{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.si2.g{background:var(--green-dim);border:1px solid var(--green-b)}
+.si2.go{background:var(--gold-dim);border:1px solid var(--gold-b)}
+.si2.r{background:var(--red-dim);border:1px solid rgba(239,68,68,.3)}
+.si2.b{background:var(--blue-dim);border:1px solid rgba(59,130,246,.3)}
+.si-info label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.si-info .val{font-size:20px;font-weight:600;line-height:1.1}
+.val.green{color:var(--green)}.val.gold{color:var(--gold)}.val.red{color:var(--red)}.val.blue{color:var(--blue)}
+.pw{max-width:1200px;margin:14px auto 0;padding:0 20px}
+.pl{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:6px}
+.pb{background:var(--bg4);border-radius:6px;height:8px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .6s ease}
+.leg{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:var(--text2)}
+.li{display:flex;align-items:center;gap:5px}
+.ld{width:10px;height:10px;border-radius:3px;border:1.5px solid}
+.ld.has{background:var(--green-dim);border-color:var(--green)}
+.ld.dup{background:var(--gold-dim);border-color:var(--gold)}
+.ld.mis{background:var(--bg3);border-color:var(--text3)}
+
+/* TOOLBAR */
+.tb{max-width:1200px;margin:12px auto 0;padding:0 12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sb{flex:1;min-width:150px;position:relative}
+.sb input{width:100%;padding:8px 12px 8px 34px;border:1px solid var(--border2);border-radius:8px;font-size:13px;background:var(--bg2);color:var(--text);outline:none;font-family:'Barlow',sans-serif;transition:border-color .2s}
+.sb input:focus{border-color:var(--accent2)}
+.sb input::placeholder{color:var(--text3)}
+.si3{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:18px;line-height:1;pointer-events:none;display:flex;align-items:center}
+.fbs{display:flex;gap:6px;flex-wrap:wrap}
+.fb{padding:6px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--bg2);font-size:12px;cursor:pointer;color:var(--text2);font-family:'Barlow',sans-serif;transition:all .15s}
+.fb:hover{border-color:var(--gold);color:var(--gold)}
+.fb.active{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.vb{padding:6px 10px;font-size:15px}
+
+/* SECTIONS & GRID */
+.secs{max-width:1200px;margin:12px auto 50px;padding:0 12px}
+.sh{display:flex;align-items:center;gap:8px;margin:24px 0 10px;padding-bottom:8px;border-bottom:1px solid rgba(74,143,212,0.2)}
+.sh h2{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:.5px}
+.sbadge{font-size:10px;padding:2px 8px;border-radius:12px;background:var(--bg4);color:var(--text2);border:1px solid var(--border)}
+.spct{margin-left:auto;font-size:11px;color:var(--text3)}
+.spct.done{color:var(--green)}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.grid.list{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:5px}
+.sticker{aspect-ratio:.72;border-radius:8px;border:1.5px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;position:relative;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;padding:4px;overflow:hidden;-webkit-tap-highlight-color:transparent}
+.sticker.pressing{transform:scale(0.93);border-color:var(--red);background:var(--red-dim)}
+.sticker:hover{border-color:rgba(255,255,255,.25);transform:scale(1.05);z-index:2}
+.sticker.has{border-color:var(--green-b);background:var(--green-dim)}
+.sticker.has .sn{color:var(--green)}
+.sticker.dup{border-color:var(--gold-b);background:var(--gold-dim)}
+.sticker.dup .sn{color:var(--gold)}
+.sn{font-family:'Bebas Neue',sans-serif;font-size:13px;line-height:1;color:var(--text3)}
+.sname{font-size:7px;text-align:center;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;padding:0 2px;margin-top:1px}
+.sticker.has .sname,.sticker.dup .sname{color:var(--text)}
+.sck{position:absolute;top:3px;right:3px;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7px}
+.sticker.has .sck{background:var(--green);color:#000}
+.sticker.dup .sck{background:var(--gold);color:#000}
+.sdb{position:absolute;bottom:3px;right:3px;background:var(--gold);color:#000;border-radius:8px;font-size:7px;font-weight:700;padding:1px 4px}
+.grid.list .sticker{aspect-ratio:unset;flex-direction:row;justify-content:flex-start;gap:10px;padding:8px 12px;height:42px}
+.grid.list .sn{font-size:13px;min-width:38px;text-align:center}
+.grid.list .sname{font-size:12px;flex:1;text-align:left;white-space:nowrap}
+.grid.list .sck{position:static}
+.grid.list .sdb{position:static}
+
+/* FRIENDS TAB */
+#friends-view{display:none;max-width:1200px;margin:20px auto 50px;padding:0 20px}
+.group-info{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.group-code{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--cream)}
+.group-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.copy-btn{padding:7px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;font-size:12px;color:var(--text2);cursor:pointer;font-family:'Barlow',sans-serif;transition:all .2s}
+.copy-btn:hover{border-color:var(--gold);color:var(--gold)}
+.friend-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.friend-header{padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .15s}
+.friend-header:hover{background:var(--bg3)}
+.fav{width:34px;height:34px;border-radius:50%;background:var(--blue-dim);border:1px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--blue);flex-shrink:0}
+.friend-meta{flex:1}
+.friend-name{font-weight:600;font-size:14px}
+.friend-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.friend-chevron{color:var(--text3);font-size:12px;transition:transform .2s}
+.friend-chevron.open{transform:rotate(180deg)}
+.friend-body{display:none;padding:0 18px 16px;border-top:1px solid var(--border)}
+.friend-body.open{display:block}
+.friend-section{margin-top:14px}
+.friend-section h4{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px}
+.pill-grid{display:flex;flex-wrap:wrap;gap:5px}
+.pill{padding:3px 8px;border-radius:6px;font-size:11px;font-family:'Barlow',sans-serif}
+.pill.mis{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.pill.dup{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-b)}
+.no-friends{text-align:center;padding:48px 20px;color:var(--text3);font-size:14px}
+.loading-friends{text-align:center;padding:32px;color:var(--text2);font-size:13px}
+.friend-pbar{background:var(--bg4);border-radius:4px;height:5px;margin-top:6px;overflow:hidden}
+.friend-pfill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px}
+
+/* MODALS */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:center;justify-content:center;padding:20px}
+.ov.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:26px;width:100%;max-width:340px}
+.modal h2{font-family:'Bebas Neue',sans-serif;font-size:22px;margin-bottom:4px}
+.modal p{font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5}
+.modal input{width:100%;padding:10px 14px;border:1px solid var(--border2);border-radius:8px;font-size:14px;background:var(--bg3);color:var(--text);font-family:'Barlow',sans-serif;outline:none;margin-bottom:10px}
+.modal input:focus{border-color:var(--accent2)}
+.mbs{display:flex;gap:8px}
+.bp{flex:1;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif}
+.bs{padding:10px 16px;background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:8px;font-size:14px;cursor:pointer;font-family:'Barlow',sans-serif}
+
+/* SYNC INDICATOR */
+.sync{position:fixed;bottom:20px;right:20px;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:6px 12px;font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:50}
+.sync.show{opacity:1}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.sync.saved .sync-dot{background:var(--green);animation:none}
+
+.toast{position:fixed;bottom:56px;left:50%;transform:translateX(-50%);background:var(--bg4);border:1px solid var(--border2);color:var(--text);padding:9px 18px;border-radius:20px;font-size:13px;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.nores{text-align:center;padding:48px;color:var(--text3);font-size:14px}
+
+  .logo{font-size:24px !important}
+  .logo small{font-size:11px !important}
+  .ht h1{font-size:18px !important}
+  .ht p{font-size:11px !important}
+  .friends-btn{font-size:13px !important;padding:6px 14px !important}
+  .upill{padding:5px 14px 5px 7px !important}
+  .uav{width:28px !important;height:28px !important;font-size:12px !important}
+  .upill span{font-size:13px !important}
+  .tab{font-size:14px !important;padding:10px 20px !important}
+  .sw{margin:20px auto 0 !important}
+  .sc{padding:14px 20px !important}
+  .si-info .val{font-size:26px !important}
+  .si-info label{font-size:11px !important}
+  .si2{width:38px !important;height:38px !important;font-size:18px !important}
+  .pw{margin:16px auto 0 !important}
+  .pb{height:10px !important}
+  .pl{font-size:13px !important}
+  .leg{font-size:12px !important}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr)) !important;gap:10px !important}
+  .sticker{border-radius:10px !important}
+  .sn{font-size:18px !important}
+  .sname{font-size:9px !important}
+  .sck{width:16px !important;height:16px !important;font-size:9px !important}
+  .sdb{font-size:9px !important;padding:2px 5px !important}
+  .sh h2{font-size:22px !important}
+  .sbadge{font-size:11px !important}
+  .spct{font-size:12px !important}
+  .fb{font-size:13px !important;padding:7px 16px !important}
+  .sb input{font-size:14px !important;padding:9px 14px 9px 38px !important}
+  .tb{margin:20px auto 0 !important}
+  .friend-name{font-size:15px !important}
+  .friend-sub{font-size:12px !important}
+  .pill{font-size:12px !important;padding:4px 10px !important}
+  .friend-section h4{font-size:12px !important}
+  .group-code{font-size:26px !important}
+}
+
+/* ── DESKTOP (min-width: 900px) ── */
+@media(min-width:900px){  .grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr)) !important;gap:10px !important}
+
+  body{font-size:18px}
+  .hi{padding:14px 32px !important;gap:16px !important}
+  .logo{font-size:32px !important}
+  .logo small{font-size:13px !important;letter-spacing:3px !important}
+  .ht h1{font-size:22px !important}
+  .ht p{font-size:13px !important}
+  .friends-btn{font-size:15px !important;padding:8px 18px !important;border-radius:24px !important}
+  .upill{padding:7px 16px 7px 8px !important;gap:8px !important}
+  .uav{width:34px !important;height:34px !important;font-size:13px !important}
+  .upill span{font-size:15px !important}
+  .tabs{padding:0 32px !important}
+  .tab{font-size:16px !important;padding:12px 24px !important}
+  .sw{margin:24px auto 0 !important;padding:0 32px !important;gap:16px !important}
+  .sc{padding:16px 22px !important;gap:14px !important;border-radius:12px !important}
+  .si2{width:44px !important;height:44px !important;font-size:22px !important;border-radius:10px !important}
+  .si-info label{font-size:13px !important}
+  .si-info .val{font-size:32px !important}
+  .pw{margin:20px auto 0 !important;padding:0 32px !important}
+  .pb{height:12px !important;border-radius:8px !important}
+  .pl{font-size:14px !important;margin-bottom:8px !important}
+  .leg{font-size:13px !important;gap:20px !important;margin-top:10px !important}
+  .ld{width:13px !important;height:13px !important}
+  .tb{padding:0 32px !important;margin:20px auto 0 !important;gap:12px !important}
+  .sb input{font-size:16px !important;padding:11px 16px 11px 44px !important;border-radius:10px !important}
+  .si3{font-size:18px !important;left:14px !important}
+  .fb{font-size:15px !important;padding:9px 20px !important}
+  .secs{padding:0 32px !important;margin-top:24px !important}
+  .tb{padding:0 32px !important}
+  .sh{margin:32px 0 14px !important;padding-bottom:10px !important}
+  .sh h2{font-size:26px !important}
+  .sbadge{font-size:13px !important;padding:4px 12px !important}
+  .spct{font-size:14px !important}
+  .sn{font-size:20px !important}
+  .sname{font-size:10px !important}
+  .sck{width:18px !important;height:18px !important;font-size:10px !important;top:4px !important;right:4px !important}
+  .sdb{font-size:10px !important;padding:2px 6px !important}
+  .sticker{border-radius:12px !important;border-width:2px !important}
+  #friends-view{padding:0 32px !important}
+  .group-info{padding:20px 28px !important}
+  .group-code{font-size:30px !important}
+  .group-label{font-size:13px !important}
+  .copy-btn{font-size:14px !important;padding:9px 18px !important}
+  .friend-card{border-radius:12px !important}
+  .friend-header{padding:18px 22px !important;gap:16px !important}
+  .fav{width:42px !important;height:42px !important;font-size:16px !important}
+  .friend-name{font-size:17px !important}
+  .friend-sub{font-size:13px !important}
+  .friend-body{padding:0 22px 20px !important}
+  .friend-section h4{font-size:13px !important}
+  .pill{font-size:13px !important;padding:5px 12px !important}
+  .ob-card{max-width:460px !important;padding:40px !important}
+  .ob-logo{font-size:42px !important}
+  .ob-card h2{font-size:26px !important}
+  .ob-card p{font-size:15px !important}
+  .ob-input{font-size:16px !important;padding:13px 16px !important}
+  .btn-gold,.btn-outline{font-size:16px !important;padding:14px !important}
+}
+
+/* ── MOBILE: always 4 cols, beats everything ── */
+@media(max-width:899px){
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr)) !important;gap:4px !important}
+  .secs{padding:0 10px !important}
+  .sw{padding:0 10px !important}
+  .pw{padding:0 10px !important}
+  .tb{padding:0 10px !important}
+}
+</style>
+</head>
+<body>
+
+<!-- ONBOARDING -->
+<div id="onboarding">
+  <div class="ob-card">
+    <div class="ob-logo">⚽ Panini<small>FIFA WORLD CUP 2026</small></div>
+    <h2>Welcome!</h2>
+    <p>Your name + PIN identify you across all devices. Use the same combination every time.</p>
+    <div style="display:flex;gap:8px;margin-bottom:4px">
+      <input class="ob-input" id="ob-name" placeholder="Your name (e.g. João)" maxlength="30" style="flex:1;margin-bottom:0">
+      <input class="ob-input" id="ob-pin" placeholder="PIN" maxlength="4" inputmode="numeric" style="width:80px;text-align:center;letter-spacing:3px;font-weight:600;margin-bottom:0">
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-bottom:12px;margin-top:6px">Choose any 4-digit PIN — you need it to log in on other devices.</p>
+    <div class="ob-err" id="ob-err-name">Please enter your name and a 4-digit PIN.</div>
+    <button class="btn-gold" onclick="createGroup()">Create a new group</button>
+    <div class="ob-divider">or join an existing group</div>
+    <input class="ob-input" id="ob-code" placeholder="Group code (e.g. ABCD12)" maxlength="10" style="text-transform:uppercase;margin-bottom:8px">
+    <div class="ob-err" id="ob-err-code">Group not found. Check the code.</div>
+    <button class="btn-outline" onclick="joinGroup()">Join group</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <header>
+    <div class="hi">
+      <div class="logo">⚽ Panini<small>FIFA WC 2026</small></div>
+      <div class="ht">
+        <h1 id="group-name-display">My Group</h1>
+        <p id="group-code-display" style="display:none"></p>
+      </div>
+      <div class="header-actions">
+        <button class="friends-btn" onclick="showTab('friends')">👥 Friends</button>
+        <div class="upill" onclick="openNameModal()">
+          <div class="uav" id="uav">?</div>
+          <span id="unm">Me</span>
+        </div>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" id="tab-my" onclick="showTab('my')">My Collection</div>
+      <div class="tab" id="tab-friends" onclick="showTab('friends')">Friends</div>
+    </div>
+  </header>
+
+  <!-- MY COLLECTION -->
+  <div id="my-view">
+    <div class="sw">
+      <div class="sc"><div class="si2 g">✅</div><div class="si-info"><label>Collected</label><div class="val green" id="sCol">0</div></div></div>
+      <div class="sc"><div class="si2 go">⭐</div><div class="si-info"><label>Duplicates</label><div class="val gold" id="sDup">0</div></div></div>
+      <div class="sc"><div class="si2 r">❌</div><div class="si-info"><label>Missing</label><div class="val red" id="sMis">0</div></div></div>
+      <div class="sc"><div class="si2 b">📊</div><div class="si-info"><label>Complete</label><div class="val blue" id="sPct">0%</div></div></div>
+    </div>
+    <div class="pw">
+      <div class="pl"><span>Progress</span><span id="plbl">0 / 0</span></div>
+      <div class="pb"><div class="pf" id="pf" style="width:0%"></div></div>
+      <div class="leg">
+        <div class="li">✅ Have it</div>
+        <div class="li">⭐ Duplicate (×2, ×3…)</div>
+        <div class="li">❌ Missing · tap=add, hold=remove</div>
+      </div>
+    </div>
+    <div class="tb">
+      <div class="sb"><span class="si3">🔍</span><input type="text" id="srch" placeholder="Search by code or name…"></div>
+      <div class="fbs">
+        <button class="fb active" data-f="all" onclick="setF(this,'all')">All</button>
+        <button class="fb" data-f="has" onclick="setF(this,'has')">Have ✅</button>
+        <button class="fb" data-f="dup" onclick="setF(this,'dup')">Duplicates ⭐</button>
+        <button class="fb" data-f="mis" onclick="setF(this,'mis')">Missing</button>
+      </div>
+      <button class="fb vb" id="vb" onclick="toggleV()">⊞</button>
+    </div>
+    <div class="secs" id="root"></div>
+  </div>
+
+  <!-- FRIENDS VIEW -->
+  <div id="friends-view">
+    <div class="group-info">
+      <div>
+        <div class="group-label">Group code – share with friends</div>
+        <div class="group-code" id="fc-display"></div>
+      </div>
+      <button class="copy-btn" onclick="copyCode()">Copy code</button>
+    </div>
+    <div id="friends-list"><div class="loading-friends">Loading friends…</div></div>
+  </div>
+</div>
+
+<!-- NAME MODAL -->
+<div class="ov" id="name-modal">
+  <div class="modal">
+    <h2>Your Name</h2>
+    <p>Change how you appear to your group.</p>
+    <input type="text" id="nm-input" maxlength="30" placeholder="Your name">
+    <div class="mbs">
+      <button class="bs" onclick="closeNameModal()">Cancel</button>
+      <button class="bp" onclick="saveNameModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="sync" id="sync"><div class="sync-dot"></div><span id="sync-txt">Saving…</span></div>
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, serverTimestamp, enableIndexedDbPersistence }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCSIyabcLMOuu7Sv5L3T37pxcBGYSFn7TM",
+  authDomain: "panini-2026-80d33.firebaseapp.com",
+  projectId: "panini-2026-80d33",
+  storageBucket: "panini-2026-80d33.firebasestorage.app",
+  messagingSenderId: "1040899579718",
+  appId: "1:1040899579718:web:66bc816fa7e87a34564f47"
+};
+
+const fireApp = initializeApp(firebaseConfig);
+const db = getFirestore(fireApp);
+// Enable offline persistence so writes survive app close
+enableIndexedDbPersistence(db).catch(()=>{});
+
+// ── ALBUM DATA ────────────────────────────────────────────────────────────
+const ALBUM=[
+  {id:"FWC",name:"🌍 Introduction",s:[
+    {c:"00",l:"Panini Logo"},{c:"FWC1",l:"Official Emblem"},{c:"FWC2",l:"Official Emblem"},{c:"FWC3",l:"Official Mascots"},{c:"FWC4",l:"Official Slogan"},
+    {c:"FWC5",l:"Official Ball"},{c:"FWC6",l:"Canada Host Cities"},{c:"FWC7",l:"Mexico Host Cities"},{c:"FWC8",l:"USA Host Cities"},
+  ]},
+  {id:"MEX",name:"🇲🇽 Mexico",s:[{c:"MEX1",l:"Team Logo"},{c:"MEX2",l:"Luis Malagón"},{c:"MEX3",l:"Johan Vasquez"},{c:"MEX4",l:"Jorge Sánchez"},{c:"MEX5",l:"Cesar Montes"},{c:"MEX6",l:"Jesus Gallardo"},{c:"MEX7",l:"Israel Reyes"},{c:"MEX8",l:"Diego Lainez"},{c:"MEX9",l:"Carlos Rodriguez"},{c:"MEX10",l:"Edson Alvarez"},{c:"MEX11",l:"Orbelin Pineda"},{c:"MEX12",l:"Marcel Ruiz"},{c:"MEX13",l:"Team Photo"},{c:"MEX14",l:"Érick Sánchez"},{c:"MEX15",l:"Hirving Lozano"},{c:"MEX16",l:"Santiago Giménez"},{c:"MEX17",l:"Raúl Jiménez"},{c:"MEX18",l:"Alexis Vega"},{c:"MEX19",l:"Roberto Alvarado"},{c:"MEX20",l:"Cesar Huerta"}]},
+  {id:"RSA",name:"🇿🇦 South Africa",s:[{c:"RSA1",l:"Team Logo"},{c:"RSA2",l:"Ronwen Williams"},{c:"RSA3",l:"Sipho Chaine"},{c:"RSA4",l:"Aubrey Modiba"},{c:"RSA5",l:"Samukele Kabini"},{c:"RSA6",l:"Mbekezeli Mbokazi"},{c:"RSA7",l:"Khulumani Ndamane"},{c:"RSA8",l:"Siyabonga Ngezana"},{c:"RSA9",l:"Khuliso Mudau"},{c:"RSA10",l:"Nkosinathi Sibisi"},{c:"RSA11",l:"Teboho Mokoena"},{c:"RSA12",l:"Thalente Mbatha"},{c:"RSA13",l:"Team Photo"},{c:"RSA14",l:"Bathasi Aubaas"},{c:"RSA15",l:"Yaya Sithole"},{c:"RSA16",l:"Sipho Mbule"},{c:"RSA17",l:"Lyle Foster"},{c:"RSA18",l:"Iqraam Rayners"},{c:"RSA19",l:"Mohau Nkota"},{c:"RSA20",l:"Oswin Appollis"}]},
+  {id:"KOR",name:"🇰🇷 South Korea",s:[{c:"KOR1",l:"Team Logo"},{c:"KOR2",l:"Hyeon-woo Jo"},{c:"KOR3",l:"Seung-Gyu Kim"},{c:"KOR4",l:"Min-jae Kim"},{c:"KOR5",l:"Yu-min Cho"},{c:"KOR6",l:"Young-woo Seol"},{c:"KOR7",l:"Han-beom Lee"},{c:"KOR8",l:"Tae-seok Lee"},{c:"KOR9",l:"Myung-jae Lee"},{c:"KOR10",l:"Jae-sung Lee"},{c:"KOR11",l:"In-beom Hwang"},{c:"KOR12",l:"Kang-in Lee"},{c:"KOR13",l:"Team Photo"},{c:"KOR14",l:"Seung-ho Paik"},{c:"KOR15",l:"Jens Castrop"},{c:"KOR16",l:"Dongg-yeong Lee"},{c:"KOR17",l:"Gue-sung Cho"},{c:"KOR18",l:"Heung-min Son"},{c:"KOR19",l:"Hee-chan Hwang"},{c:"KOR20",l:"Hyeon-Gyu Oh"}]},
+  {id:"CZE",name:"🇨🇿 Czechia",s:[{c:"CZE1",l:"Team Logo"},{c:"CZE2",l:"Matej Kovar"},{c:"CZE3",l:"Jindrich Stanek"},{c:"CZE4",l:"Ladislav Krejci"},{c:"CZE5",l:"Vladimir Coufal"},{c:"CZE6",l:"Jaroslav Zeleny"},{c:"CZE7",l:"Tomas Holes"},{c:"CZE8",l:"David Zima"},{c:"CZE9",l:"Michal Sadilek"},{c:"CZE10",l:"Lukas Provod"},{c:"CZE11",l:"Lukas Cerv"},{c:"CZE12",l:"Tomas Soucek"},{c:"CZE13",l:"Team Photo"},{c:"CZE14",l:"Pavel Sulc"},{c:"CZE15",l:"Matej Vydra"},{c:"CZE16",l:"Vasil Kusej"},{c:"CZE17",l:"Tomas Chory"},{c:"CZE18",l:"Vaclav Cerny"},{c:"CZE19",l:"Adam Hlozek"},{c:"CZE20",l:"Patrik Schick"}]},
+  {id:"CAN",name:"🇨🇦 Canada",s:[{c:"CAN1",l:"Team Logo"},{c:"CAN2",l:"Dayne St.Clair"},{c:"CAN3",l:"Alphonso Davies"},{c:"CAN4",l:"Alistair Johnston"},{c:"CAN5",l:"Samuel Adekugbe"},{c:"CAN6",l:"Riche Larvea"},{c:"CAN7",l:"Derek Cornelius"},{c:"CAN8",l:"Moïse Bombito"},{c:"CAN9",l:"Kamal Miller"},{c:"CAN10",l:"Stephen Eustáquio"},{c:"CAN11",l:"Ismaël Koné"},{c:"CAN12",l:"Jonathan Osorio"},{c:"CAN13",l:"Team Photo"},{c:"CAN14",l:"Jacob Shaffelburg"},{c:"CAN15",l:"Mathieu Choinière"},{c:"CAN16",l:"Niko Sigur"},{c:"CAN17",l:"Tajon Buchanan"},{c:"CAN18",l:"Liam Millar"},{c:"CAN19",l:"Cyle Larin"},{c:"CAN20",l:"Jonathan David"}]},
+  {id:"BIH",name:"🇧🇦 Bosnia & Herzegovina",s:[{c:"BIH1",l:"Team Logo"},{c:"BIH2",l:"Nikola Vasilj"},{c:"BIH3",l:"Amer Dedic"},{c:"BIH4",l:"Sead Kolasinac"},{c:"BIH5",l:"Tarik Muharemovic"},{c:"BIH6",l:"Nihad Mujakic"},{c:"BIH7",l:"Nikola Katic"},{c:"BIH8",l:"Amir Hadziahmetovic"},{c:"BIH9",l:"Benjamin Tahirovic"},{c:"BIH10",l:"Armin Gigovic"},{c:"BIH11",l:"Ivan Sunjic"},{c:"BIH12",l:"Ivan Basic"},{c:"BIH13",l:"Team Photo"},{c:"BIH14",l:"Dzenis Burnic"},{c:"BIH15",l:"Esmir Bajraktarevic"},{c:"BIH16",l:"Amar Memic"},{c:"BIH17",l:"Ermedin Demirovic"},{c:"BIH18",l:"Edin Dzeko"},{c:"BIH19",l:"Samed Bazdar"},{c:"BIH20",l:"Haris Tabakovic"}]},
+  {id:"QAT",name:"🇶🇦 Qatar",s:[{c:"QAT1",l:"Team Logo"},{c:"QAT2",l:"Meshaal Barsham"},{c:"QAT3",l:"Sultan Albrake"},{c:"QAT4",l:"Lucas Mendes"},{c:"QAT5",l:"Homam Ahmed"},{c:"QAT6",l:"Boualem Khoukhi"},{c:"QAT7",l:"Pedro Miguel"},{c:"QAT8",l:"Tarek Salman"},{c:"QAT9",l:"Mohamed Al-Mannai"},{c:"QAT10",l:"Karim Boudiaf"},{c:"QAT11",l:"Assim Madibo"},{c:"QAT12",l:"Ahmed Fatehi"},{c:"QAT13",l:"Team Photo"},{c:"QAT14",l:"Mohammed Waad"},{c:"QAT15",l:"Abdulaziz Hatem"},{c:"QAT16",l:"Hassan Al-Haydos"},{c:"QAT17",l:"Edmilson Junior"},{c:"QAT18",l:"Akram Hassan Afif"},{c:"QAT19",l:"Ahmed Al Ganehi"},{c:"QAT20",l:"Almoez Ali"}]},
+  {id:"SUI",name:"🇨🇭 Switzerland",s:[{c:"SUI1",l:"Team Logo"},{c:"SUI2",l:"Gregor Kobel"},{c:"SUI3",l:"Yvon Mvogo"},{c:"SUI4",l:"Manuel Akanji"},{c:"SUI5",l:"Ricardo Rodriguez"},{c:"SUI6",l:"Nico Elvedi"},{c:"SUI7",l:"Aurèle Amenda"},{c:"SUI8",l:"Silvan Widmer"},{c:"SUI9",l:"Granit Xhaka"},{c:"SUI10",l:"Denis Zakaria"},{c:"SUI11",l:"Remo Freuler"},{c:"SUI12",l:"Fabian Rieder"},{c:"SUI13",l:"Team Photo"},{c:"SUI14",l:"Ardon Jashari"},{c:"SUI15",l:"Johan Manzambi"},{c:"SUI16",l:"Michel Aebischer"},{c:"SUI17",l:"Breel Embolo"},{c:"SUI18",l:"Ruben Vargas"},{c:"SUI19",l:"Dan Ndoye"},{c:"SUI20",l:"Zeki Amdouni"}]},
+  {id:"BRA",name:"🇧🇷 Brazil",s:[{c:"BRA1",l:"Team Logo"},{c:"BRA2",l:"Alisson"},{c:"BRA3",l:"Bento"},{c:"BRA4",l:"Marquinhos"},{c:"BRA5",l:"Éder Militão"},{c:"BRA6",l:"Gabriel Magalhães"},{c:"BRA7",l:"Danilo"},{c:"BRA8",l:"Wesley"},{c:"BRA9",l:"Lucas Paquetá"},{c:"BRA10",l:"Casemiro"},{c:"BRA11",l:"Bruno Guimarães"},{c:"BRA12",l:"Luiz Henrique"},{c:"BRA13",l:"Team Photo"},{c:"BRA14",l:"Vinicius Júnior"},{c:"BRA15",l:"Rodrygo"},{c:"BRA16",l:"João Pedro"},{c:"BRA17",l:"Matheus Cunha"},{c:"BRA18",l:"Gabriel Martinelli"},{c:"BRA19",l:"Raphinha"},{c:"BRA20",l:"Estévão"}]},
+  {id:"MAR",name:"🇲🇦 Morocco",s:[{c:"MAR1",l:"Team Logo"},{c:"MAR2",l:"Yassine Bounou"},{c:"MAR3",l:"Munir El Kajoui"},{c:"MAR4",l:"Achraf Hakimi"},{c:"MAR5",l:"Noussair Mazraoui"},{c:"MAR6",l:"Nayef Aguerd"},{c:"MAR7",l:"Roman Saiss"},{c:"MAR8",l:"Jawad El Yamio"},{c:"MAR9",l:"Adam Masina"},{c:"MAR10",l:"Sofyan Amrabat"},{c:"MAR11",l:"Azzedine Ounahi"},{c:"MAR12",l:"Eliesse Ben Seghir"},{c:"MAR13",l:"Team Photo"},{c:"MAR14",l:"Bilal El Khannouss"},{c:"MAR15",l:"Ismael Saibari"},{c:"MAR16",l:"Youssef En-Nesyri"},{c:"MAR17",l:"Abde Ezzalzouli"},{c:"MAR18",l:"Soufiane Rahimi"},{c:"MAR19",l:"Brahim Diaz"},{c:"MAR20",l:"Ayoub El Kaabi"}]},
+  {id:"HAI",name:"🇭🇹 Haiti",s:[{c:"HAI1",l:"Team Logo"},{c:"HAI2",l:"Johny Placide"},{c:"HAI3",l:"Carlens Arcus"},{c:"HAI4",l:"Martin Expérience"},{c:"HAI5",l:"Jean-Kevin Duverne"},{c:"HAI6",l:"Ricardo Adé"},{c:"HAI7",l:"Duke Lacroix"},{c:"HAI8",l:"Garven Metusala"},{c:"HAI9",l:"Hannes Delcroix"},{c:"HAI10",l:"Leverton Pierre"},{c:"HAI11",l:"Danley Jean Jacques"},{c:"HAI12",l:"Jean-Ricner Bellegarde"},{c:"HAI13",l:"Team Photo"},{c:"HAI14",l:"Christopher Attys"},{c:"HAI15",l:"Derrick Etienne Jr"},{c:"HAI16",l:"Josue Casimir"},{c:"HAI17",l:"Ruben Providence"},{c:"HAI18",l:"Duckens Nazon"},{c:"HAI19",l:"Louicius Deedson"},{c:"HAI20",l:"Frantzdy Pierrot"}]},
+  {id:"SCO",name:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland",s:[{c:"SCO1",l:"Team Logo"},{c:"SCO2",l:"Angus Gunn"},{c:"SCO3",l:"Jack Hendry"},{c:"SCO4",l:"Kieran Tierney"},{c:"SCO5",l:"Aaron Hickey"},{c:"SCO6",l:"Andrew Robertson"},{c:"SCO7",l:"Scott McKenna"},{c:"SCO8",l:"John Souttar"},{c:"SCO9",l:"Anthony Ralston"},{c:"SCO10",l:"Grant Hanley"},{c:"SCO11",l:"Scott McTominay"},{c:"SCO12",l:"Billy Gilmour"},{c:"SCO13",l:"Team Photo"},{c:"SCO14",l:"Lewis Ferguson"},{c:"SCO15",l:"Ryan Christie"},{c:"SCO16",l:"Kenny McLean"},{c:"SCO17",l:"John McGinn"},{c:"SCO18",l:"Lyndon Dykes"},{c:"SCO19",l:"Che Adams"},{c:"SCO20",l:"Ben Gannon-Doak"}]},
+  {id:"USA",name:"🇺🇸 USA",s:[{c:"USA1",l:"Team Logo"},{c:"USA2",l:"Matt Freese"},{c:"USA3",l:"Chris Richards"},{c:"USA4",l:"Tim Ream"},{c:"USA5",l:"Mark McKenzie"},{c:"USA6",l:"Alex Freeman"},{c:"USA7",l:"Antonee Robinson"},{c:"USA8",l:"Tyler Adams"},{c:"USA9",l:"Tanner Tessmann"},{c:"USA10",l:"Weston McKennie"},{c:"USA11",l:"Christian Roldan"},{c:"USA12",l:"Timothy Weah"},{c:"USA13",l:"Team Photo"},{c:"USA14",l:"Diego Luna"},{c:"USA15",l:"Malik Tillman"},{c:"USA16",l:"Christian Pulisic"},{c:"USA17",l:"Brenden Aaronson"},{c:"USA18",l:"Ricardo Pepi"},{c:"USA19",l:"Haji Wright"},{c:"USA20",l:"Folarin Balogun"}]},
+  {id:"PAR",name:"🇵🇾 Paraguay",s:[{c:"PAR1",l:"Team Logo"},{c:"PAR2",l:"Roberto Fernandez"},{c:"PAR3",l:"Orlando Gill"},{c:"PAR4",l:"Gustavo Gomez"},{c:"PAR5",l:"Fabián Balbuena"},{c:"PAR6",l:"Juan José Cáceres"},{c:"PAR7",l:"Omar Alderete"},{c:"PAR8",l:"Junior Alonso"},{c:"PAR9",l:"Mathías Villasanti"},{c:"PAR10",l:"Diego Gomez"},{c:"PAR11",l:"Damián Bobadilla"},{c:"PAR12",l:"Andres Cubas"},{c:"PAR13",l:"Team Photo"},{c:"PAR14",l:"Matias Galarza Fonda"},{c:"PAR15",l:"Julio Enciso"},{c:"PAR16",l:"A. Romero Gamarra"},{c:"PAR17",l:"Miguel Almirón"},{c:"PAR18",l:"Ramon Sosa"},{c:"PAR19",l:"Angel Romero"},{c:"PAR20",l:"Antonio Sanabria"}]},
+  {id:"AUS",name:"🇦🇺 Australia",s:[{c:"AUS1",l:"Team Logo"},{c:"AUS2",l:"Mathew Ryan"},{c:"AUS3",l:"Joe Gauci"},{c:"AUS4",l:"Harry Souttar"},{c:"AUS5",l:"Alessandro Circati"},{c:"AUS6",l:"Jordan Bos"},{c:"AUS7",l:"Aziz Behich"},{c:"AUS8",l:"Cameron Burgess"},{c:"AUS9",l:"Lewis Miller"},{c:"AUS10",l:"Milos Degenek"},{c:"AUS11",l:"Jackson Irvine"},{c:"AUS12",l:"Riley McGree"},{c:"AUS13",l:"Team Photo"},{c:"AUS14",l:"Aiden O'Neill"},{c:"AUS15",l:"Connor Metcalfe"},{c:"AUS16",l:"Patrick Yazbek"},{c:"AUS17",l:"Craig Goodwin"},{c:"AUS18",l:"Kusini Vengi"},{c:"AUS19",l:"Nestory Irankunda"},{c:"AUS20",l:"Mohamed Touré"}]},
+  {id:"TUR",name:"🇹🇷 Türkiye",s:[{c:"TUR1",l:"Team Logo"},{c:"TUR2",l:"Ugurcan Cakir"},{c:"TUR3",l:"Mert Muldur"},{c:"TUR4",l:"Zeki Celik"},{c:"TUR5",l:"Abdulkerim Bardakci"},{c:"TUR6",l:"Caglar Soyuncu"},{c:"TUR7",l:"Merih Demiral"},{c:"TUR8",l:"Ferdi Kadioglu"},{c:"TUR9",l:"Kaan Ayhan"},{c:"TUR10",l:"Ismail Yuksek"},{c:"TUR11",l:"Hakan Calhanoglu"},{c:"TUR12",l:"Orkun Kokcu"},{c:"TUR13",l:"Team Photo"},{c:"TUR14",l:"Arda Guler"},{c:"TUR15",l:"Irfan Can Kahveci"},{c:"TUR16",l:"Yunus Akgun"},{c:"TUR17",l:"Can Uzun"},{c:"TUR18",l:"Baris Alper Yilmaz"},{c:"TUR19",l:"Kerem Akturkoglu"},{c:"TUR20",l:"Kenan Yildiz"}]},
+  {id:"GER",name:"🇩🇪 Germany",s:[{c:"GER1",l:"Team Logo"},{c:"GER2",l:"Marc-André ter Stegen"},{c:"GER3",l:"Jonathan Tah"},{c:"GER4",l:"David Raum"},{c:"GER5",l:"Nico Schlotterbeck"},{c:"GER6",l:"Antonio Rüdiger"},{c:"GER7",l:"Waldemar Anton"},{c:"GER8",l:"Ridle Baku"},{c:"GER9",l:"Max. Mittelstadt"},{c:"GER10",l:"Joshua Kimmich"},{c:"GER11",l:"Florian Wirtz"},{c:"GER12",l:"Felix Nmecha"},{c:"GER13",l:"Team Photo"},{c:"GER14",l:"Leon Goretzka"},{c:"GER15",l:"Jamal Musiala"},{c:"GER16",l:"Serge Gnabry"},{c:"GER17",l:"Kai Havertz"},{c:"GER18",l:"Leroy Sane"},{c:"GER19",l:"Karim Adeyemi"},{c:"GER20",l:"Nick Woltemade"}]},
+  {id:"CUW",name:"🇨🇼 Curaçao",s:[{c:"CUW1",l:"Team Logo"},{c:"CUW2",l:"Eloy Room"},{c:"CUW3",l:"Armando Obispo"},{c:"CUW4",l:"Sherel Floranus"},{c:"CUW5",l:"Jurien Gaari"},{c:"CUW6",l:"Joshua Brenet"},{c:"CUW7",l:"Roshon Van Eijma"},{c:"CUW8",l:"Shurandy Sambo"},{c:"CUW9",l:"Livano Comenencia"},{c:"CUW10",l:"G. Roemeratoe"},{c:"CUW11",l:"Juninho Bacuna"},{c:"CUW12",l:"Leandro Bacuna"},{c:"CUW13",l:"Team Photo"},{c:"CUW14",l:"Tahith Chong"},{c:"CUW15",l:"Kenji Gorre"},{c:"CUW16",l:"Jearl Margaritha"},{c:"CUW17",l:"Jurgen Locadia"},{c:"CUW18",l:"Jeremy Antonisse"},{c:"CUW19",l:"Gervane Kastaneer"},{c:"CUW20",l:"Sontje Hansen"}]},
+  {id:"CIV",name:"🇨🇮 Ivory Coast",s:[{c:"CIV1",l:"Team Logo"},{c:"CIV2",l:"Yahia Fofana"},{c:"CIV3",l:"Ghislain Konan"},{c:"CIV4",l:"Wilfried Singo"},{c:"CIV5",l:"Odilon Kossounou"},{c:"CIV6",l:"Evan Ndicka"},{c:"CIV7",l:"Willy Boly"},{c:"CIV8",l:"Emmanuel Agbadou"},{c:"CIV9",l:"Ousmane Diomande"},{c:"CIV10",l:"Franck Kessie"},{c:"CIV11",l:"Seko Fofana"},{c:"CIV12",l:"Ibrahim Sangare"},{c:"CIV13",l:"Team Photo"},{c:"CIV14",l:"Jean-Philippe Gbamin"},{c:"CIV15",l:"Amad Diallo"},{c:"CIV16",l:"Sébastien Haller"},{c:"CIV17",l:"Simon Adingra"},{c:"CIV18",l:"Yan Diomande"},{c:"CIV19",l:"Evann Guessand"},{c:"CIV20",l:"Oumar Diakite"}]},
+  {id:"ECU",name:"🇪🇨 Ecuador",s:[{c:"ECU1",l:"Team Logo"},{c:"ECU2",l:"Hernán Galíndez"},{c:"ECU3",l:"Gonzalo Valle"},{c:"ECU4",l:"Piero Hincapié"},{c:"ECU5",l:"Pervis Estupiñán"},{c:"ECU6",l:"Willian Pacho"},{c:"ECU7",l:"Ángelo Preciado"},{c:"ECU8",l:"Joel Ordóñez"},{c:"ECU9",l:"Moises Caicedo"},{c:"ECU10",l:"Alan Franco"},{c:"ECU11",l:"Kendry Paez"},{c:"ECU12",l:"Pedro Vite"},{c:"ECU13",l:"Team Photo"},{c:"ECU14",l:"John Veboah"},{c:"ECU15",l:"Leonardo Campana"},{c:"ECU16",l:"Gonzalo Plata"},{c:"ECU17",l:"Nilson Angulo"},{c:"ECU18",l:"Alan Minda"},{c:"ECU19",l:"Kevin Rodriguez"},{c:"ECU20",l:"Enner Valencia"}]},
+  {id:"NED",name:"🇳🇱 Netherlands",s:[{c:"NED1",l:"Team Logo"},{c:"NED2",l:"Bart Verbruggen"},{c:"NED3",l:"Virgil van Dijk"},{c:"NED4",l:"Micky van de Ven"},{c:"NED5",l:"Jurrien Timber"},{c:"NED6",l:"Denzel Dumfries"},{c:"NED7",l:"Nathan Aké"},{c:"NED8",l:"Jeremie Frimpong"},{c:"NED9",l:"J.P. van Hecke"},{c:"NED10",l:"Tijjani Reijnders"},{c:"NED11",l:"Ryan Gravenberch"},{c:"NED12",l:"Teun Koopmeiners"},{c:"NED13",l:"Team Photo"},{c:"NED14",l:"Frenkie de Jong"},{c:"NED15",l:"Xavi Simons"},{c:"NED16",l:"Justin Kluivert"},{c:"NED17",l:"Memphis Depay"},{c:"NED18",l:"Donyell Malen"},{c:"NED19",l:"Wout Weghorst"},{c:"NED20",l:"Cody Gakpo"}]},
+  {id:"JPN",name:"🇯🇵 Japan",s:[{c:"JPN1",l:"Team Logo"},{c:"JPN2",l:"Zion Suzuki"},{c:"JPN3",l:"H.H. Mochizuki"},{c:"JPN4",l:"Ayumu Seko"},{c:"JPN5",l:"Junnosuke Suzuki"},{c:"JPN6",l:"Shogo Taniguchi"},{c:"JPN7",l:"Tsuyoshi Watanabe"},{c:"JPN8",l:"Kaishu Sano"},{c:"JPN9",l:"Yuki Soma"},{c:"JPN10",l:"Ao Tanaka"},{c:"JPN11",l:"Daichi Kamada"},{c:"JPN12",l:"Takefusa Kubo"},{c:"JPN13",l:"Team Photo"},{c:"JPN14",l:"Ritsu Doan"},{c:"JPN15",l:"Keito Nakamura"},{c:"JPN16",l:"Takumi Minamino"},{c:"JPN17",l:"Shuto Machino"},{c:"JPN18",l:"Junya Ito"},{c:"JPN19",l:"Koki Ogawa"},{c:"JPN20",l:"Ayase Ueda"}]},
+  {id:"SWE",name:"🇸🇪 Sweden",s:[{c:"SWE1",l:"Team Logo"},{c:"SWE2",l:"Victor Johansson"},{c:"SWE3",l:"Isak Hien"},{c:"SWE4",l:"Gabriel Gudmundsson"},{c:"SWE5",l:"Emil Holm"},{c:"SWE6",l:"Victor N. Lindelöf"},{c:"SWE7",l:"Gustaf Lagerbielke"},{c:"SWE8",l:"Lucas Bergvall"},{c:"SWE9",l:"Hugo Larsson"},{c:"SWE10",l:"Jesper Karlström"},{c:"SWE11",l:"Yasin Ayari"},{c:"SWE12",l:"Mattias Svanberg"},{c:"SWE13",l:"Team Photo"},{c:"SWE14",l:"Daniel Svensson"},{c:"SWE15",l:"Ken Sema"},{c:"SWE16",l:"Roony Bardghji"},{c:"SWE17",l:"Dejan Kulusevski"},{c:"SWE18",l:"Anthony Elanga"},{c:"SWE19",l:"Alexander Isak"},{c:"SWE20",l:"Viktor Gyökeres"}]},
+  {id:"TUN",name:"🇹🇳 Tunisia",s:[{c:"TUN1",l:"Team Logo"},{c:"TUN2",l:"Bechir Ben Said"},{c:"TUN3",l:"Aymen Dahmen"},{c:"TUN4",l:"Yan Valery"},{c:"TUN5",l:"Montassar Talbi"},{c:"TUN6",l:"Yassine Meriah"},{c:"TUN7",l:"Ali Abdi"},{c:"TUN8",l:"Dylan Bronn"},{c:"TUN9",l:"Ellyes Skhiri"},{c:"TUN10",l:"Aissa Laidouni"},{c:"TUN11",l:"Ferjani Sassi"},{c:"TUN12",l:"M.A. Ben Romdhane"},{c:"TUN13",l:"Team Photo"},{c:"TUN14",l:"Hannibal Mejbri"},{c:"TUN15",l:"Elias Achouri"},{c:"TUN16",l:"Elias Saad"},{c:"TUN17",l:"Hazem Mastouri"},{c:"TUN18",l:"Ismael Gharbi"},{c:"TUN19",l:"Sayfallah Ltaief"},{c:"TUN20",l:"Naim Sliti"}]},
+  {id:"BEL",name:"🇧🇪 Belgium",s:[{c:"BEL1",l:"Team Logo"},{c:"BEL2",l:"Thibaut Courtois"},{c:"BEL3",l:"Arthur Theate"},{c:"BEL4",l:"Timothy Castagne"},{c:"BEL5",l:"Zeno Debast"},{c:"BEL6",l:"Brandon Mechele"},{c:"BEL7",l:"Maxim De Cuyper"},{c:"BEL8",l:"Thomas Meunier"},{c:"BEL9",l:"Youri Tielemans"},{c:"BEL10",l:"Amadou Onana"},{c:"BEL11",l:"Nicolas Raskin"},{c:"BEL12",l:"Alexis Saelemaekers"},{c:"BEL13",l:"Team Photo"},{c:"BEL14",l:"Hans Vanaken"},{c:"BEL15",l:"Kevin De Bruyne"},{c:"BEL16",l:"Jérémy Doku"},{c:"BEL17",l:"Charles De Ketelaere"},{c:"BEL18",l:"Leandro Trossard"},{c:"BEL19",l:"Loïs Openda"},{c:"BEL20",l:"Romelu Lukaku"}]},
+  {id:"EGY",name:"🇪🇬 Egypt",s:[{c:"EGY1",l:"Team Logo"},{c:"EGY2",l:"Mohamed El Shenawy"},{c:"EGY3",l:"Mohamed Hany"},{c:"EGY4",l:"Mohamed Hamdy"},{c:"EGY5",l:"Yasser Ibrahim"},{c:"EGY6",l:"Khaled Sobhi"},{c:"EGY7",l:"Ramy Rabia"},{c:"EGY8",l:"Hossam Abdelmaguid"},{c:"EGY9",l:"Ahmed Fatouh"},{c:"EGY10",l:"Marwan Attia"},{c:"EGY11",l:"Zizo"},{c:"EGY12",l:"Hamdy Fathy"},{c:"EGY13",l:"Team Photo"},{c:"EGY14",l:"Mohamed Lasheen"},{c:"EGY15",l:"Emam Ashour"},{c:"EGY16",l:"Osama Faisal"},{c:"EGY17",l:"Mohamed Salah"},{c:"EGY18",l:"Mostafa Mohamed"},{c:"EGY19",l:"Trezeguet"},{c:"EGY20",l:"Omar Marmoush"}]},
+  {id:"IRN",name:"🇮🇷 Iran",s:[{c:"IRN1",l:"Team Logo"},{c:"IRN2",l:"Alireza Beiranvand"},{c:"IRN3",l:"Morteza Pouraliganji"},{c:"IRN4",l:"Ehsan Hajsafi"},{c:"IRN5",l:"Milad Mohammadi"},{c:"IRN6",l:"Shojae Khalilzadeh"},{c:"IRN7",l:"Ramin Rezaeian"},{c:"IRN8",l:"Hossein Kanaani"},{c:"IRN9",l:"Sadegh Moharrami"},{c:"IRN10",l:"Saleh Hardani"},{c:"IRN11",l:"Saeed Ezatolahi"},{c:"IRN12",l:"Saman Ghoddos"},{c:"IRN13",l:"Team Photo"},{c:"IRN14",l:"Omid Noorafkan"},{c:"IRN15",l:"Roozbeh Cheshmi"},{c:"IRN16",l:"Mohammad Mohebi"},{c:"IRN17",l:"Sardar Azmoun"},{c:"IRN18",l:"Mehdi Taremi"},{c:"IRN19",l:"Alireza Jahanbakhsh"},{c:"IRN20",l:"Ali Gholizadeh"}]},
+  {id:"NZL",name:"🇳🇿 New Zealand",s:[{c:"NZL1",l:"Team Logo"},{c:"NZL2",l:"Max Crocombe Payne"},{c:"NZL3",l:"Alex Paulsen"},{c:"NZL4",l:"Michael Boxall"},{c:"NZL5",l:"Liberato Cacace"},{c:"NZL6",l:"Tim Payne"},{c:"NZL7",l:"Tyler Bindon"},{c:"NZL8",l:"Francis de Vries"},{c:"NZL9",l:"Finn Surman"},{c:"NZL10",l:"Joe Bell"},{c:"NZL11",l:"Sarpreet Singh"},{c:"NZL12",l:"Ryan Thomas"},{c:"NZL13",l:"Team Photo"},{c:"NZL14",l:"Matthew Garbett"},{c:"NZL15",l:"Marko Stamenić"},{c:"NZL16",l:"Ben Old"},{c:"NZL17",l:"Chris Wood"},{c:"NZL18",l:"Elijah Just"},{c:"NZL19",l:"Callum McCowatt"},{c:"NZL20",l:"Kosta Barbarouses"}]},
+  {id:"ESP",name:"🇪🇸 Spain",s:[{c:"ESP1",l:"Team Logo"},{c:"ESP2",l:"Unai Simon"},{c:"ESP3",l:"Robin Le Normand"},{c:"ESP4",l:"Aymeric Laporte"},{c:"ESP5",l:"Dean Huijsen"},{c:"ESP6",l:"Pedro Porro"},{c:"ESP7",l:"Dani Carvajal"},{c:"ESP8",l:"Marc Cucurella"},{c:"ESP9",l:"Martín Zubimendi"},{c:"ESP10",l:"Rodri"},{c:"ESP11",l:"Pedri"},{c:"ESP12",l:"Fabian Ruiz"},{c:"ESP13",l:"Team Photo"},{c:"ESP14",l:"Mikel Merino"},{c:"ESP15",l:"Lamine Yamal"},{c:"ESP16",l:"Dani Olmo"},{c:"ESP17",l:"Nico Williams"},{c:"ESP18",l:"Ferran Torres"},{c:"ESP19",l:"Álvaro Morata"},{c:"ESP20",l:"Mikel Oyarzabal"}]},
+  {id:"CPV",name:"🇨🇻 Cape Verde",s:[{c:"CPV1",l:"Team Logo"},{c:"CPV2",l:"Vozinha"},{c:"CPV3",l:"Logan Costa"},{c:"CPV4",l:"Pico"},{c:"CPV5",l:"Diney"},{c:"CPV6",l:"Steven Moreira"},{c:"CPV7",l:"Wagner Pina"},{c:"CPV8",l:"Joao Paulo"},{c:"CPV9",l:"Yannick Semedo"},{c:"CPV10",l:"Kevin Pina"},{c:"CPV11",l:"Patrick Andrade"},{c:"CPV12",l:"Jamiro Monteiro"},{c:"CPV13",l:"Team Photo"},{c:"CPV14",l:"Deroy Duarte"},{c:"CPV15",l:"Garry Rodrigues"},{c:"CPV16",l:"Jovane Cabral"},{c:"CPV17",l:"Ryan Mendes"},{c:"CPV18",l:"Dailon Livramento"},{c:"CPV19",l:"Willy Semedo"},{c:"CPV20",l:"Bebe"}]},
+  {id:"KSA",name:"🇸🇦 Saudi Arabia",s:[{c:"KSA1",l:"Team Logo"},{c:"KSA2",l:"Nawaf Alaqidi"},{c:"KSA3",l:"A. Al-Sanbi"},{c:"KSA4",l:"Saud Abdulhamid"},{c:"KSA5",l:"Nawaf Bouwashl"},{c:"KSA6",l:"Jihad Thakri"},{c:"KSA7",l:"Moteb Al-Harbi"},{c:"KSA8",l:"Hassan Altambakti"},{c:"KSA9",l:"Musab Aljuwayr"},{c:"KSA10",l:"Ziyad Aljohani"},{c:"KSA11",l:"A. Alkhaibari"},{c:"KSA12",l:"Nasser Aldawsari"},{c:"KSA13",l:"Team Photo"},{c:"KSA14",l:"Saleh Abu Alshamat"},{c:"KSA15",l:"Marwan Alsahafi"},{c:"KSA16",l:"Salem Aldawsari"},{c:"KSA17",l:"A. Al-Aboud"},{c:"KSA18",l:"Feras Akbrikan"},{c:"KSA19",l:"Saleh Alshehri"},{c:"KSA20",l:"A. Al-Hamdan"}]},
+  {id:"URU",name:"🇺🇾 Uruguay",s:[{c:"URU1",l:"Team Logo"},{c:"URU2",l:"Sergio Rochet"},{c:"URU3",l:"Santiago Mele"},{c:"URU4",l:"Ronald Araujo"},{c:"URU5",l:"José María Giménez"},{c:"URU6",l:"Sebastian Caceres"},{c:"URU7",l:"Mathias Olivera"},{c:"URU8",l:"Guillermo Varela"},{c:"URU9",l:"Nahitan Nandez"},{c:"URU10",l:"Federico Valverde"},{c:"URU11",l:"G. De Arrascaeta"},{c:"URU12",l:"Rodrigo Bentancur"},{c:"URU13",l:"Team Photo"},{c:"URU14",l:"Manuel Ugarte"},{c:"URU15",l:"Nicolás de la Cruz"},{c:"URU16",l:"Maxi Araujo"},{c:"URU17",l:"Darwin Núñez"},{c:"URU18",l:"Federico Viñas"},{c:"URU19",l:"Rodrigo Aguirre"},{c:"URU20",l:"Facundo Pellistri"}]},
+  {id:"FRA",name:"🇫🇷 France",s:[{c:"FRA1",l:"Team Logo"},{c:"FRA2",l:"Mike Maignan"},{c:"FRA3",l:"Theo Hernandez"},{c:"FRA4",l:"William Saliba"},{c:"FRA5",l:"Jules Kounde"},{c:"FRA6",l:"Ibrahima Konate"},{c:"FRA7",l:"Dayot Upamecano"},{c:"FRA8",l:"Lucas Digne"},{c:"FRA9",l:"Aurélien Tchouaméni"},{c:"FRA10",l:"Eduardo Camavinga"},{c:"FRA11",l:"Manu Kone"},{c:"FRA12",l:"Adrien Rabiot"},{c:"FRA13",l:"Team Photo"},{c:"FRA14",l:"Michael Olise"},{c:"FRA15",l:"Ousmane Dembele"},{c:"FRA16",l:"Bradley Barcola"},{c:"FRA17",l:"Désiré Doué"},{c:"FRA18",l:"Kingsley Coman"},{c:"FRA19",l:"Hugo Ekitike"},{c:"FRA20",l:"Kylian Mbappe"}]},
+  {id:"SEN",name:"🇸🇳 Senegal",s:[{c:"SEN1",l:"Team Logo"},{c:"SEN2",l:"Edouard Mendy"},{c:"SEN3",l:"Yehvann Diouf"},{c:"SEN4",l:"Moussa Niakhaté"},{c:"SEN5",l:"Abdoulaye Seck"},{c:"SEN6",l:"Ismail Jakobs"},{c:"SEN7",l:"El Hadji M. Diouf"},{c:"SEN8",l:"Kalidou Koulibaly"},{c:"SEN9",l:"I. Gana Gueye"},{c:"SEN10",l:"Pape Matar Sarr"},{c:"SEN11",l:"Pape Gueye"},{c:"SEN12",l:"Habib Diarra"},{c:"SEN13",l:"Team Photo"},{c:"SEN14",l:"Lamine Camara"},{c:"SEN15",l:"Sadio Mane"},{c:"SEN16",l:"Ismaïla Sarr"},{c:"SEN17",l:"Boulaye Dia"},{c:"SEN18",l:"Iliman Ndiaye"},{c:"SEN19",l:"Nicolas Jackson"},{c:"SEN20",l:"Krepin Diatta"}]},
+  {id:"IRQ",name:"🇮🇶 Iraq",s:[{c:"IRQ1",l:"Team Logo"},{c:"IRQ2",l:"Jalal Hassan"},{c:"IRQ3",l:"Rebin Sulaka"},{c:"IRQ4",l:"Hussein Ali"},{c:"IRQ5",l:"Akam Hashem"},{c:"IRQ6",l:"Merchas Doski"},{c:"IRQ7",l:"Zaid Tahseen"},{c:"IRQ8",l:"Manaf Younis"},{c:"IRQ9",l:"Zidane Iqbal"},{c:"IRQ10",l:"Amir Al-Ammari"},{c:"IRQ11",l:"Ibrahim Bavesh"},{c:"IRQ12",l:"Ali Jasim"},{c:"IRQ13",l:"Team Photo"},{c:"IRQ14",l:"Youssef Amyn"},{c:"IRQ15",l:"Aimar Sher"},{c:"IRQ16",l:"Marko Farji"},{c:"IRQ17",l:"Osama Rashid"},{c:"IRQ18",l:"Ali Al-Hamadi"},{c:"IRQ19",l:"Aymen Hussein"},{c:"IRQ20",l:"Mohanad Ali"}]},
+  {id:"NOR",name:"🇳🇴 Norway",s:[{c:"NOR1",l:"Team Logo"},{c:"NOR2",l:"Orjan Nyland"},{c:"NOR3",l:"Julian Ryerson"},{c:"NOR4",l:"Leo Ostigård"},{c:"NOR5",l:"K.V. Ajer"},{c:"NOR6",l:"M.H. Pedersen"},{c:"NOR7",l:"David Møller Wolfe"},{c:"NOR8",l:"Torbjørn Heggem"},{c:"NOR9",l:"Morten Thorsby"},{c:"NOR10",l:"Martin Ødegaard"},{c:"NOR11",l:"Sander Berge"},{c:"NOR12",l:"Andreas Schjelderup"},{c:"NOR13",l:"Team Photo"},{c:"NOR14",l:"Patrick Berg"},{c:"NOR15",l:"Erling Haaland"},{c:"NOR16",l:"Alexander Sørloth"},{c:"NOR17",l:"Aron Dønnum"},{c:"NOR18",l:"Jorgen Strand Larsen"},{c:"NOR19",l:"Antonio Nusa"},{c:"NOR20",l:"Oscar Bobb"}]},
+  {id:"ARG",name:"🇦🇷 Argentina",s:[{c:"ARG1",l:"Team Logo"},{c:"ARG2",l:"Emiliano Martinez"},{c:"ARG3",l:"Nahuel Molina"},{c:"ARG4",l:"Cristian Romero"},{c:"ARG5",l:"Nicolas Otamendi"},{c:"ARG6",l:"Nicolas Tagliafico"},{c:"ARG7",l:"Leonardo Balerdi"},{c:"ARG8",l:"Enzo Fernandez"},{c:"ARG9",l:"Alexis Mac Allister"},{c:"ARG10",l:"Rodrigo De Paul"},{c:"ARG11",l:"Exequiel Palacios"},{c:"ARG12",l:"Leandro Paredes"},{c:"ARG13",l:"Team Photo"},{c:"ARG14",l:"Nico Paz"},{c:"ARG15",l:"Franco Mastantuono"},{c:"ARG16",l:"Nico Gonzalez"},{c:"ARG17",l:"Lionel Messi"},{c:"ARG18",l:"Lautaro Martinez"},{c:"ARG19",l:"Julian Alvarez"},{c:"ARG20",l:"Giuliano Simeone"}]},
+  {id:"ALG",name:"🇩🇿 Algeria",s:[{c:"ALG1",l:"Team Logo"},{c:"ALG2",l:"Alexis Guendouz"},{c:"ALG3",l:"Ramy Bensebaini"},{c:"ALG4",l:"Youcef Atal"},{c:"ALG5",l:"Rayan Aït-Nouri"},{c:"ALG6",l:"M.A. Tougai"},{c:"ALG7",l:"Aïssa Mandi"},{c:"ALG8",l:"Ismael Bennacer"},{c:"ALG9",l:"Houssem Aquar"},{c:"ALG10",l:"Hicham Boudaoui"},{c:"ALG11",l:"Ramiz Zerrouki"},{c:"ALG12",l:"Nabil Bentalab"},{c:"ALG13",l:"Team Photo"},{c:"ALG14",l:"Farés Chaibi"},{c:"ALG15",l:"Riyad Mahrez"},{c:"ALG16",l:"Said Benrahma"},{c:"ALG17",l:"Anis Hadj Moussa"},{c:"ALG18",l:"Amine Gouiri"},{c:"ALG19",l:"Baghdad Bounedjah"},{c:"ALG20",l:"Mohammed Amoura"}]},
+  {id:"AUT",name:"🇦🇹 Austria",s:[{c:"AUT1",l:"Team Logo"},{c:"AUT2",l:"Alexander Schlager"},{c:"AUT3",l:"Patrick Pentz"},{c:"AUT4",l:"David Alaba"},{c:"AUT5",l:"Kevin Danso"},{c:"AUT6",l:"Philipp Lienhart"},{c:"AUT7",l:"Stefan Posch"},{c:"AUT8",l:"Phillipp Mwene"},{c:"AUT9",l:"Alexander Prass"},{c:"AUT10",l:"Xaver Schlager"},{c:"AUT11",l:"Marcel Sabitzer"},{c:"AUT12",l:"Konrad Laimer"},{c:"AUT13",l:"Team Photo"},{c:"AUT14",l:"Florian Grillitsch"},{c:"AUT15",l:"Nicolas Seiwald"},{c:"AUT16",l:"Romano Schmid"},{c:"AUT17",l:"Patrick Wimmer"},{c:"AUT18",l:"C. Baumgartner"},{c:"AUT19",l:"Michael Gregoritsch"},{c:"AUT20",l:"Marko Arnautović"}]},
+  {id:"JOR",name:"🇯🇴 Jordan",s:[{c:"JOR1",l:"Team Logo"},{c:"JOR2",l:"Yazeed Abulaila"},{c:"JOR3",l:"Ihsan Haddad"},{c:"JOR4",l:"M. Abu Hashish"},{c:"JOR5",l:"Yazan Al-Arab"},{c:"JOR6",l:"Abdallah Nasib"},{c:"JOR7",l:"Saleem Obaid"},{c:"JOR8",l:"Mohammad Abualnadi"},{c:"JOR9",l:"Ibrahim Saadeh"},{c:"JOR10",l:"Nizar Al-Rashdan"},{c:"JOR11",l:"Noor Al-Rawabdeh"},{c:"JOR12",l:"Mohannad Abu Taha"},{c:"JOR13",l:"Team Photo"},{c:"JOR14",l:"Amer Jamous"},{c:"JOR15",l:"Musa Al-Taamari"},{c:"JOR16",l:"Yazan Al-Naimat"},{c:"JOR17",l:"Mahmoud Al-Mardi"},{c:"JOR18",l:"Ali Olwan"},{c:"JOR19",l:"M. Abu Zrayq"},{c:"JOR20",l:"Ibrahim Sabra"}]},
+  {id:"POR",name:"🇵🇹 Portugal",s:[{c:"POR1",l:"Team Logo"},{c:"POR2",l:"Diogo Costa"},{c:"POR3",l:"Jose Sa"},{c:"POR4",l:"Ruben Dias"},{c:"POR5",l:"João Cancelo"},{c:"POR6",l:"Diogo Dalot"},{c:"POR7",l:"Nuno Mendes"},{c:"POR8",l:"Gonçalo Inácio"},{c:"POR9",l:"Bernardo Silva"},{c:"POR10",l:"Bruno Fernandes"},{c:"POR11",l:"Ruben Neves"},{c:"POR12",l:"Vitinha"},{c:"POR13",l:"Team Photo"},{c:"POR14",l:"João Neves"},{c:"POR15",l:"Cristiano Ronaldo"},{c:"POR16",l:"Francisco Trincao"},{c:"POR17",l:"João Felix"},{c:"POR18",l:"Gonçalo Ramos"},{c:"POR19",l:"Pedro Neto"},{c:"POR20",l:"Rafael Leão"}]},
+  {id:"COD",name:"🇨🇩 Congo DR",s:[{c:"COD1",l:"Team Logo"},{c:"COD2",l:"Lionel Mpasi"},{c:"COD3",l:"Aaron Wan-Bissaka"},{c:"COD4",l:"Axel Tuanzebe"},{c:"COD5",l:"Arthur Masuaku"},{c:"COD6",l:"Chancel Mbemba"},{c:"COD7",l:"Joris Kayembe"},{c:"COD8",l:"Charles Pickel"},{c:"COD9",l:"Ngal'ayel Mukau"},{c:"COD10",l:"Edo Kayembe"},{c:"COD11",l:"Samuel Moutoussamy"},{c:"COD12",l:"Noah Sadiki"},{c:"COD13",l:"Team Photo"},{c:"COD14",l:"Théo Bongonda"},{c:"COD15",l:"Meschak Elia"},{c:"COD16",l:"Yoane Wissa"},{c:"COD17",l:"Brian Cipenga"},{c:"COD18",l:"Fiston Mayele"},{c:"COD19",l:"Cédric Bakambu"},{c:"COD20",l:"Nathanaël Mbuku"}]},
+  {id:"UZB",name:"🇺🇿 Uzbekistan",s:[{c:"UZB1",l:"Team Logo"},{c:"UZB2",l:"Utkir Yusupov"},{c:"UZB3",l:"Farrukh Savfiev"},{c:"UZB4",l:"Sherzod Nasrullaev"},{c:"UZB5",l:"Umar Eshmurodov"},{c:"UZB6",l:"Husniddin Aliqulov"},{c:"UZB7",l:"R. Ashurmatov"},{c:"UZB8",l:"Khojiakbar Alijonov"},{c:"UZB9",l:"Abdukodir Khusanov"},{c:"UZB10",l:"O. Hamrobekov"},{c:"UZB11",l:"Otabek Shukurov"},{c:"UZB12",l:"Jamshid Iskanderov"},{c:"UZB13",l:"Team Photo"},{c:"UZB14",l:"Azizbek Turgunboev"},{c:"UZB15",l:"Khojimat Erkinov"},{c:"UZB16",l:"Eldor Shomurodov"},{c:"UZB17",l:"Oston Urunov"},{c:"UZB18",l:"J. Masharipov"},{c:"UZB19",l:"Igor Sergeev"},{c:"UZB20",l:"Abbosbek Fayzullaev"}]},
+  {id:"COL",name:"🇨🇴 Colombia",s:[{c:"COL1",l:"Team Logo"},{c:"COL2",l:"Camilo Vargas"},{c:"COL3",l:"David Ospina"},{c:"COL4",l:"Dávinson Sánchez"},{c:"COL5",l:"Yerry Mina"},{c:"COL6",l:"Daniel Munoz"},{c:"COL7",l:"Johan Mojica"},{c:"COL8",l:"Jhon Lucumí"},{c:"COL9",l:"Santiago Arias"},{c:"COL10",l:"Jefferson Lerma"},{c:"COL11",l:"Kevin Castaño"},{c:"COL12",l:"Richard Rios"},{c:"COL13",l:"Team Photo"},{c:"COL14",l:"James Rodriguez"},{c:"COL15",l:"J.F. Quintero"},{c:"COL16",l:"Jorge Carrascal"},{c:"COL17",l:"Jon Arias"},{c:"COL18",l:"Jhon Cordova"},{c:"COL19",l:"Luis Suarez"},{c:"COL20",l:"Luis Diaz"}]},
+  {id:"ENG",name:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England",s:[{c:"ENG1",l:"Team Logo"},{c:"ENG2",l:"Jordan Pickford"},{c:"ENG3",l:"John Stones"},{c:"ENG4",l:"Marc Guéhi"},{c:"ENG5",l:"Ezri Konsa"},{c:"ENG6",l:"Trent Alexander-Arnold"},{c:"ENG7",l:"Reece James"},{c:"ENG8",l:"Dan Burn"},{c:"ENG9",l:"Jordan Henderson"},{c:"ENG10",l:"Declan Rice"},{c:"ENG11",l:"Jude Bellingham"},{c:"ENG12",l:"Cole Palmer"},{c:"ENG13",l:"Team Photo"},{c:"ENG14",l:"Morgan Rogers"},{c:"ENG15",l:"Anthony Gordon"},{c:"ENG16",l:"Phil Foden"},{c:"ENG17",l:"Bukayo Saka"},{c:"ENG18",l:"Harry Kane"},{c:"ENG19",l:"Marcus Rashford"},{c:"ENG20",l:"Ollie Watkins"}]},
+  {id:"CRO",name:"🇭🇷 Croatia",s:[{c:"CRO1",l:"Team Logo"},{c:"CRO2",l:"Dominik Livaković"},{c:"CRO3",l:"Duje Caleta-Car"},{c:"CRO4",l:"Josko Gvardiol"},{c:"CRO5",l:"Josip Stanišić"},{c:"CRO6",l:"Luka Vušković"},{c:"CRO7",l:"Josip Sutalo"},{c:"CRO8",l:"Kristijan Jakic"},{c:"CRO9",l:"Luka Modrić"},{c:"CRO10",l:"Mateo Kovacic"},{c:"CRO11",l:"Martin Baturina"},{c:"CRO12",l:"Lovro Majer"},{c:"CRO13",l:"Team Photo"},{c:"CRO14",l:"Mario Pasalic"},{c:"CRO15",l:"Petar Sucic"},{c:"CRO16",l:"Ivan Perišić"},{c:"CRO17",l:"Marco Pasalic"},{c:"CRO18",l:"Ante Budimir"},{c:"CRO19",l:"Andrej Kramarić"},{c:"CRO20",l:"Franjo Ivanovic"}]},
+  {id:"GHA",name:"🇬🇭 Ghana",s:[{c:"GHA1",l:"Team Logo"},{c:"GHA2",l:"Lawrence Ati Zigi"},{c:"GHA3",l:"Tariq Lamptey"},{c:"GHA4",l:"Mohammed Salisu"},{c:"GHA5",l:"Alidu Seidu"},{c:"GHA6",l:"Alexander Djiku"},{c:"GHA7",l:"Gideon Mensah"},{c:"GHA8",l:"Caleb Yirenkyi"},{c:"GHA9",l:"A.I. Fatawu"},{c:"GHA10",l:"Thomas Partey"},{c:"GHA11",l:"Salis Abdul Samed"},{c:"GHA12",l:"Kamaldeen Sulemana"},{c:"GHA13",l:"Team Photo"},{c:"GHA14",l:"Mohammed Kudus"},{c:"GHA15",l:"Inaki Williams"},{c:"GHA16",l:"Jordan Ayew"},{c:"GHA17",l:"Andrew Ayew"},{c:"GHA18",l:"Joseph Paintsil"},{c:"GHA19",l:"Osman Bukari"},{c:"GHA20",l:"Antoine Semenyo"}]},
+  {id:"PAN",name:"🇵🇦 Panama",s:[{c:"PAN1",l:"Team Logo"},{c:"PAN2",l:"Orlando Mosquera"},{c:"PAN3",l:"Luis Mejia"},{c:"PAN4",l:"Fidel Escobar"},{c:"PAN5",l:"Andres Andrade"},{c:"PAN6",l:"Michael Amir Murillo"},{c:"PAN7",l:"Eric Davis"},{c:"PAN8",l:"Jose Cordoba"},{c:"PAN9",l:"Cesar Blackman"},{c:"PAN10",l:"Cristian Martinez"},{c:"PAN11",l:"Aníbal Godoy"},{c:"PAN12",l:"A. Carrasquilla"},{c:"PAN13",l:"Team Photo"},{c:"PAN14",l:"Édgar Bárcenas"},{c:"PAN15",l:"Carlos Harvey"},{c:"PAN16",l:"Ismael Díaz"},{c:"PAN17",l:"Jose Fajardo"},{c:"PAN18",l:"Cecilio Waterman"},{c:"PAN19",l:"Jose Luiz Rodriguez"},{c:"PAN20",l:"Alberto Quintero"}]},
+  {id:"FIFA",name:"🏆 FIFA Museum",s:[
+    {c:"FWC9",l:"Italy 1934"},{c:"FWC10",l:"Uruguay 1950"},{c:"FWC11",l:"W.Germany 1954"},{c:"FWC12",l:"Brazil 1962"},{c:"FWC13",l:"W.Germany 1974"},
+    {c:"FWC14",l:"Argentina 1986"},{c:"FWC15",l:"Brazil 1994"},{c:"FWC16",l:"Brazil 2002"},{c:"FWC17",l:"Italy 2006"},{c:"FWC18",l:"Germany 2014"},{c:"FWC19",l:"Argentina 2022"},
+  ]},
+  {id:"COCA",name:"🥤 Coca-Cola Exclusives",s:[{c:"CC1",l:"Lamine Yamal"},{c:"CC2",l:"Joshua Kimmich"},{c:"CC3",l:"Harry Kane"},{c:"CC4",l:"Santiago Giménez"},{c:"CC5",l:"Antonee Robinson"},{c:"CC6",l:"Jefferson Lerma"},{c:"CC7",l:"Edson Álvarez"},{c:"CC8",l:"Virgil van Dijk"},{c:"CC9",l:"Alphonso Davies"},{c:"CC10",l:"Weston McKennie"},{c:"CC11",l:"Lautaro Martínez"},{c:"CC12",l:"Gabriel Magalhães"}]},
+];
+
+const TOTAL = ALBUM.reduce((s,sec)=>s+sec.s.length,0);
+const ALL_STICKERS = {};
+ALBUM.forEach(sec=>sec.s.forEach(s=>ALL_STICKERS[s.c]=s.l));
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let myUserId = localStorage.getItem('p26uid') || null;
+let myName = localStorage.getItem('p26name') || '';
+let myGroupId = localStorage.getItem('p26group') || null;
+let col = {};
+let filter = 'all', listView = false;
+let saveTimer = null;
+let dirty = false;
+let friendsData = {};
+let friendsUnsub = null;
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function genId(len=6){ return Math.random().toString(36).substring(2,2+len).toUpperCase(); }
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1500);
+}
+function showSync(saving){
+  const s=document.getElementById('sync');
+  document.getElementById('sync-txt').textContent=saving?'Saving…':'Saved';
+  s.className='sync show'+(saving?'':' saved');
+  if(!saving)setTimeout(()=>s.classList.remove('show'),1500);
+}
+
+// ── ONBOARDING ────────────────────────────────────────────────────────────
+window.createGroup = async function(){
+  const name = document.getElementById('ob-name').value.trim();
+  const pin = document.getElementById('ob-pin').value.trim();
+  if(!name || pin.length < 4){document.getElementById('ob-err-name').style.display='block';return;}
+  document.getElementById('ob-err-name').style.display='none';
+  // Stable UID = name+PIN hash (so same person = same UID across devices)
+  const uid = btoa(name.toLowerCase()+':'+pin).replace(/[^a-zA-Z0-9]/g,'').substring(0,16);
+  const groupId = genId(6);
+  myUserId = uid; myName = name; myGroupId = groupId;
+  localStorage.setItem('p26uid', uid);
+  localStorage.setItem('p26name', name);
+  localStorage.setItem('p26group', groupId);
+  // Create group doc
+  await setDoc(doc(db,'groups',groupId),{createdAt:serverTimestamp(),createdBy:uid});
+  // Create user doc (merge so existing data is preserved)
+  const existing = await getDoc(doc(db,'groups',groupId,'members',uid));
+  if(!existing.exists()){
+    await setDoc(doc(db,'groups',groupId,'members',uid),{name,col:{},updatedAt:serverTimestamp()});
+  }
+  startApp();
+}
+
+window.joinGroup = async function(){
+  const name = document.getElementById('ob-name').value.trim();
+  const pin = document.getElementById('ob-pin').value.trim();
+  const code = document.getElementById('ob-code').value.trim().toUpperCase();
+  if(!name || pin.length < 4){document.getElementById('ob-err-name').style.display='block';return;}
+  document.getElementById('ob-err-name').style.display='none';
+  const groupSnap = await getDoc(doc(db,'groups',code));
+  if(!groupSnap.exists()){document.getElementById('ob-err-code').style.display='block';return;}
+  document.getElementById('ob-err-code').style.display='none';
+  // Same stable UID from name+PIN
+  const uid = btoa(name.toLowerCase()+':'+pin).replace(/[^a-zA-Z0-9]/g,'').substring(0,16);
+  myUserId = uid; myName = name; myGroupId = code;
+  localStorage.setItem('p26uid', uid);
+  localStorage.setItem('p26name', name);
+  localStorage.setItem('p26group', code);
+  // Only create member doc if new — preserve existing collection
+  const existing = await getDoc(doc(db,'groups',code,'members',uid));
+  if(!existing.exists()){
+    await setDoc(doc(db,'groups',code,'members',uid),{name,col:{},updatedAt:serverTimestamp()});
+  }
+  startApp();
+}
+
+// ── APP START ─────────────────────────────────────────────────────────────
+async function startApp(){
+  // Load my collection
+  const snap = await getDoc(doc(db,'groups',myGroupId,'members',myUserId));
+  if(snap.exists()) col = snap.data().col || {};
+  // Show app
+  document.getElementById('onboarding').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('uav').textContent = myName.slice(0,2).toUpperCase();
+  document.getElementById('unm').textContent = myName;
+  document.getElementById('group-name-display').textContent = 'JAT';
+  document.getElementById('group-code-display').textContent = 'Code: '+myGroupId;
+  document.getElementById('fc-display').textContent = myGroupId;
+  updateStats();
+  renderMy();
+  subscribeToFriends();
+  document.getElementById('srch').addEventListener('input', renderMy);
+}
+
+// ── FIRESTORE SYNC ────────────────────────────────────────────────────────
+function saveNow(){
+  // Save col as a plain object — NO merge so deleted stickers are truly removed
+  setDoc(doc(db,'groups',myGroupId,'members',myUserId), {name:myName, col, updatedAt:serverTimestamp()})
+    .then(()=>{ dirty=false; showSync(false); })
+    .catch(e=>console.error('Save failed',e));
+}
+
+function scheduleSave(){
+  dirty = true;
+  showSync(true);
+  clearTimeout(saveTimer);
+  // Save immediately — Firestore handles the network queue
+  saveNow();
+}
+
+function subscribeToFriends(){
+  if(friendsUnsub) friendsUnsub();
+  // Only listen to friends — never let server overwrite our own local state
+  friendsUnsub = onSnapshot(collection(db,'groups',myGroupId,'members'), snap=>{
+    friendsData = {};
+    snap.forEach(d=>{
+      if(d.id !== myUserId) friendsData[d.id] = d.data();
+    });
+    renderFriends();
+  });
+}
+
+// ── MY COLLECTION ─────────────────────────────────────────────────────────
+window.addSticker = function(c){
+  col[c] = (col[c]||0) + 1;
+  scheduleSave(); renderMy(); updateStats();
+  const v=col[c];
+  showToast(v===1 ? 'Got it! ✓' : `${v} copies ★`);
+}
+window.removeSticker = function(c, e){
+  e.preventDefault(); e.stopPropagation();
+  if(!col[c]) return;
+  col[c]--;
+  if(col[c]===0) delete col[c];
+  scheduleSave(); renderMy(); updateStats();
+  showToast(col[c] ? `${col[c]} ${col[c]===1?'copy':'copies'} left` : 'Removed ✗');
+}
+// keep old name working too
+window.cycle = window.addSticker;
+
+window.setF = function(btn,f){
+  document.querySelectorAll('.fb[data-f]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); filter=f; renderMy();
+}
+
+window.toggleV = function(){
+  listView=!listView;
+  document.getElementById('vb').textContent=listView?'☰':'⊞';
+  renderMy();
+}
+
+function updateStats(){
+  let has=0,dup=0;
+  for(const v of Object.values(col)){if(v>=1)has++;if(v>=2)dup++;}
+  const mis=TOTAL-has,pct=TOTAL?Math.round(has/TOTAL*100):0;
+  document.getElementById('sCol').textContent=has;
+  document.getElementById('sDup').textContent=dup;
+  document.getElementById('sMis').textContent=mis;
+  document.getElementById('sPct').textContent=pct+'%';
+  document.getElementById('pf').style.width=pct+'%';
+  document.getElementById('plbl').textContent=has+' / '+TOTAL;
+}
+
+window.renderMy = function renderMy(){
+  const q=document.getElementById('srch').value.trim().toLowerCase();
+  const root=document.getElementById('root'); root.innerHTML='';
+  ALBUM.forEach(sec=>{
+    const filtered=sec.s.filter(s=>{
+      const v=col[s.c]||0;
+      const mf=filter==='all'||(filter==='has'&&v===1)||(filter==='dup'&&v>=2)||(filter==='mis'&&v===0);
+      const mq=!q||s.c.toLowerCase().includes(q)||s.l.toLowerCase().includes(q);
+      return mf&&mq;
+    });
+    if(!filtered.length)return;
+    const secHas=sec.s.filter(s=>(col[s.c]||0)>=1).length;
+    const pct=Math.round(secHas/sec.s.length*100);
+    const wrap=document.createElement('div');
+    wrap.innerHTML=`<div class="sh"><h2>${sec.name}</h2><span class="sbadge">${secHas}/${sec.s.length}</span><span class="spct${pct===100?' done':''}">${pct}%</span></div>`;
+    const grid=document.createElement('div');
+    grid.className='grid'+(listView?' list':'');
+    filtered.forEach(s=>{
+      const v=col[s.c]||0;
+      const cls=v===0?'':v===1?'has':'dup';
+      const chk=v===1?'✓':v>=2?'★':'';
+      const card=document.createElement('div');
+      card.className='sticker '+cls;
+      card.title=`${s.c} – ${s.l} (tap to add, hold to remove)`;
+      card.innerHTML=(chk?`<div class="sck">${chk}</div>`:'')+`<div class="sn">${s.c}</div><div class="sname">${s.l}</div>`+(v>=2?`<div class="sdb">×${v}</div>`:'');
+      let isLongPress = false;
+      let lt;
+      card.addEventListener('click',(e)=>{
+        if(isLongPress){ isLongPress=false; return; }
+        addSticker(s.c);
+      });
+      card.addEventListener('contextmenu',(e)=>{e.preventDefault();removeSticker(s.c,e);});
+      card.addEventListener('touchstart',(e)=>{
+        isLongPress=false;
+        lt=setTimeout(()=>{
+          isLongPress=true;
+          card.classList.add('pressing');
+          col[s.c] = (col[s.c]||0) - 1;
+          if(col[s.c]<=0) delete col[s.c];
+          scheduleSave(); renderMy(); updateStats();
+          showToast(col[s.c] ? col[s.c]+' left' : 'Removed ✗');
+          if(navigator.vibrate) navigator.vibrate(40);
+        },500);
+      },{passive:true});
+      card.addEventListener('touchend',()=>{clearTimeout(lt);},{passive:true});
+      card.addEventListener('touchmove',()=>{clearTimeout(lt);},{passive:true});
+      grid.appendChild(card);
+    });
+    wrap.appendChild(grid); root.appendChild(wrap);
+  });
+  if(!root.children.length) root.innerHTML='<div class="nores">No stickers found.</div>';
+}
+
+// ── FRIENDS VIEW ──────────────────────────────────────────────────────────
+window.showTab = function(tab){
+  document.getElementById('tab-my').classList.toggle('active', tab==='my');
+  document.getElementById('tab-friends').classList.toggle('active', tab==='friends');
+  document.getElementById('my-view').style.display = tab==='my'?'block':'none';
+  document.getElementById('friends-view').style.display = tab==='friends'?'block':'none';
+}
+
+function renderFriends(){
+  const list = document.getElementById('friends-list');
+  const entries = Object.entries(friendsData);
+  if(!entries.length){
+    list.innerHTML='<div class="no-friends">No friends yet.<br>Share the group code so they can join!</div>';
+    return;
+  }
+  list.innerHTML='';
+  entries.forEach(([uid, data])=>{
+    const fCol = data.col||{};
+    let fHas=0,fDup=0;
+    for(const v of Object.values(fCol)){if(v>=1)fHas++;if(v>=2)fDup++;}
+    const fPct=TOTAL?Math.round(fHas/TOTAL*100):0;
+    // What they're missing that I have duplicates of
+    const iCanGive=[];
+    for(const[c,v] of Object.entries(col)){
+      if(v>=2 && !fCol[c]) iCanGive.push(c);
+    }
+    // What they have duplicates of that I need
+    const theyCanGive=[];
+    for(const[c,v] of Object.entries(fCol)){
+      if(v>=2 && !col[c]) theyCanGive.push(c);
+    }
+    // Their missing stickers
+    const missing=[];
+    for(const[c] of Object.entries(ALL_STICKERS)){
+      if(!fCol[c]) missing.push(c);
+    }
+
+    const card=document.createElement('div');
+    card.className='friend-card';
+    card.innerHTML=`
+      <div class="friend-header" onclick="toggleFriend(this)">
+        <div class="fav">${data.name.slice(0,2).toUpperCase()}</div>
+        <div class="friend-meta">
+          <div class="friend-name">${data.name}</div>
+          <div class="friend-sub">${fHas}/${TOTAL} collected · ${fDup} duplicates · ${fPct}%</div>
+          <div class="friend-pbar"><div class="friend-pfill" style="width:${fPct}%"></div></div>
+        </div>
+        <div class="friend-chevron">▼</div>
+      </div>
+      <div class="friend-body">
+        ${theyCanGive.length?`
+        <div class="friend-section">
+          <h4>🤝 They can give you (${theyCanGive.length} stickers)</h4>
+          <div class="pill-grid">${theyCanGive.map(c=>`<span class="pill dup" title="${ALL_STICKERS[c]}">${c}</span>`).join('')}</div>
+        </div>`:''}
+        ${iCanGive.length?`
+        <div class="friend-section">
+          <h4>🎁 You can give them (${iCanGive.length} stickers)</h4>
+          <div class="pill-grid">${iCanGive.map(c=>`<span class="pill dup" title="${ALL_STICKERS[c]}">${c}</span>`).join('')}</div>
+        </div>`:''}
+        <div class="friend-section">
+          <h4>❌ Missing (${missing.length} stickers)</h4>
+          <div class="pill-grid">${missing.slice(0,60).map(c=>`<span class="pill mis" title="${ALL_STICKERS[c]}">${c}</span>`).join('')}${missing.length>60?`<span class="pill mis">+${missing.length-60} more</span>`:''}</div>
+        </div>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+window.toggleFriend = function(header){
+  const body=header.nextElementSibling;
+  const chev=header.querySelector('.friend-chevron');
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+window.copyCode = function(){
+  navigator.clipboard.writeText(myGroupId).then(()=>showToast('Code copied! ✓')).catch(()=>{
+    showToast('Code: '+myGroupId);
+  });
+}
+
+// ── NAME MODAL ─────────────────────────────────────────────────────────────
+window.openNameModal = function(){
+  document.getElementById('nm-input').value=myName;
+  document.getElementById('name-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('nm-input').focus(),80);
+}
+window.closeNameModal = function(){ document.getElementById('name-modal').classList.remove('open'); }
+window.saveNameModal = async function(){
+  const v=document.getElementById('nm-input').value.trim();
+  if(!v)return;
+  myName=v; localStorage.setItem('p26name',myName);
+  document.getElementById('uav').textContent=myName.slice(0,2).toUpperCase();
+  document.getElementById('unm').textContent=myName;
+  await setDoc(doc(db,'groups',myGroupId,'members',myUserId),{name:myName},{merge:true});
+  closeNameModal();
+}
+document.getElementById('name-modal').addEventListener('keydown',e=>{
+  if(e.key==='Enter')saveNameModal();
+  if(e.key==='Escape')closeNameModal();
+});
+
+// ── BOOT ───────────────────────────────────────────────────────────────────
+if(myUserId && myGroupId && myName){
+  startApp();
+} else {
+  document.getElementById('onboarding').style.display='flex';
+}
+
+// Firestore SDK persists writes locally — no need for beforeunload handlers
+</script>
+<script>
+if('serviceWorker' in navigator){
+  const sw = `
+    self.addEventListener('install', e => self.skipWaiting());
+    self.addEventListener('activate', e => clients.claim());
+    self.addEventListener('fetch', e => {
+      // Network first — always get fresh data (Firebase needs live connection)
+      e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+    });
+  `;
+  const blob = new Blob([sw], {type:'application/javascript'});
+  const url = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(url).then(()=>{
+    URL.revokeObjectURL(url);
+  }).catch(()=>{});
+}
+</script>
+</body>
+</html>
