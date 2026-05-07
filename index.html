@@ -649,7 +649,7 @@ window.renderMy = function renderMy(){
   ALBUM.forEach(sec=>{
     const filtered=sec.s.filter(s=>{
       const v=col[s.c]||0;
-      const mf=filter==='all'||(filter==='has'&&v===1)||(filter==='dup'&&v>=2)||(filter==='mis'&&v===0);
+      const mf=filter==='all'||(filter==='has'&&v>=1)||(filter==='dup'&&v>=2)||(filter==='mis'&&v===0);
       const mq=!q||s.c.toLowerCase().includes(q)||s.l.toLowerCase().includes(q);
       return mf&&mq;
     });
