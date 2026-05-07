@@ -629,15 +629,18 @@ window.toggleV = function(){
 }
 
 function updateStats(){
-  let has=0,dup=0;
-  for(const v of Object.values(col)){if(v>=1)has++;if(v>=2)dup++;}
+  let has=0,dup=0,total=0;
+  for(const v of Object.values(col)){
+    if(v>=1){ has++; total+=v; }       // has = unique stickers, total = all copies
+    if(v>=2) dup+=(v-1);               // dup = extra copies only (e.g. 3 copies = 2 duplicates)
+  }
   const mis=TOTAL-has,pct=TOTAL?Math.round(has/TOTAL*100):0;
-  document.getElementById('sCol').textContent=has;
+  document.getElementById('sCol').textContent=total;  // show total copies collected
   document.getElementById('sDup').textContent=dup;
   document.getElementById('sMis').textContent=mis;
   document.getElementById('sPct').textContent=pct+'%';
   document.getElementById('pf').style.width=pct+'%';
-  document.getElementById('plbl').textContent=has+' / '+TOTAL;
+  document.getElementById('plbl').textContent=has+' / '+TOTAL+' unique';
 }
 
 window.renderMy = function renderMy(){
@@ -664,7 +667,8 @@ window.renderMy = function renderMy(){
       const card=document.createElement('div');
       card.className='sticker '+cls;
       card.title=`${s.c} – ${s.l} (tap to add, hold to remove)`;
-      card.innerHTML=(chk?`<div class="sck">${chk}</div>`:'')+`<div class="sn">${s.c}</div><div class="sname">${s.l}</div>`+(v>=2?`<div class="sdb">×${v}</div>`:'');
+      const dupBadge=v>=3?`<div class="sdb">×${v-1}</div>`:''; // ×2 means 2 extras (3 total)
+      card.innerHTML=(chk?`<div class="sck">${chk}</div>`:'')+`<div class="sn">${s.c}</div><div class="sname">${s.l}</div>`+dupBadge;
       let isLongPress = false;
       let lt;
       card.addEventListener('click',(e)=>{
@@ -737,7 +741,7 @@ function renderFriends(){
         <div class="fav">${data.name.slice(0,2).toUpperCase()}</div>
         <div class="friend-meta">
           <div class="friend-name">${data.name}</div>
-          <div class="friend-sub">${fHas}/${TOTAL} collected · ${fDup} duplicates · ${fPct}%</div>
+          <div class="friend-sub">${fHas}/${TOTAL} unique · ${fDup} extra copies · ${fPct}%</div>
           <div class="friend-pbar"><div class="friend-pfill" style="width:${fPct}%"></div></div>
         </div>
         <div class="friend-chevron">▼</div>
@@ -746,12 +750,12 @@ function renderFriends(){
         ${theyCanGive.length?`
         <div class="friend-section">
           <h4>🤝 They can give you (${theyCanGive.length} stickers)</h4>
-          <div class="pill-grid">${theyCanGive.map(c=>`<span class="pill dup" title="${ALL_STICKERS[c]}">${c}</span>`).join('')}</div>
+          <div class="pill-grid">${theyCanGive.map(c=>`<span class="pill dup" title="${ALL_STICKERS[c]}">${c}${fCol[c]>2?` ×${fCol[c]-1}`:''}</span>`).join('')}</div>
         </div>`:''}
         ${iCanGive.length?`
         <div class="friend-section">
           <h4>🎁 You can give them (${iCanGive.length} stickers)</h4>
-          <div class="pill-grid">${iCanGive.map(c=>`<span class="pill dup" title="${ALL_STICKERS[c]}">${c}</span>`).join('')}</div>
+          <div class="pill-grid">${iCanGive.map(c=>`<span class="pill dup" title="${ALL_STICKERS[c]}">${c}${col[c]>2?` ×${col[c]-1}`:''}</span>`).join('')}</div>
         </div>`:''}
         <div class="friend-section">
           <h4>❌ Missing (${missing.length} stickers)</h4>
