@@ -635,7 +635,7 @@ function updateStats(){
     if(v>=2) dup+=(v-1);               // dup = extra copies only (e.g. 3 copies = 2 duplicates)
   }
   const mis=TOTAL-has,pct=TOTAL?Math.round(has/TOTAL*100):0;
-  document.getElementById('sCol').textContent=total;  // show total copies collected
+  document.getElementById('sCol').textContent=has;  // show unique stickers
   document.getElementById('sDup').textContent=dup;
   document.getElementById('sMis').textContent=mis;
   document.getElementById('sPct').textContent=pct+'%';
