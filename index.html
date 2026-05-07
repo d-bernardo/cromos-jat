@@ -302,11 +302,7 @@ header{background:linear-gradient(135deg,#0e1118 0%,#161b27 60%,#1c2233 100%);bo
 .stat-block.gold{border-color:var(--gold-b);background:var(--gold-dim)}
 .stat-block.green{border-color:var(--green-b);background:var(--green-dim)}
 /* share card inner rows */
-.sc-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
-.sc-row:last-child{border-bottom:none}
-.sc-label{font-size:12px;color:#8e97b0;display:flex;align-items:center;gap:5px}
-.sc-val{font-family:'Bebas Neue',sans-serif;font-size:18px;color:#f0ede6;line-height:1.1}
-.sc-sub{font-size:10px;color:#4e576e;margin-top:1px;text-align:right;line-height:1.2}
+
 </style>
 </head>
 <body>
@@ -418,16 +414,15 @@ header{background:linear-gradient(135deg,#0e1118 0%,#161b27 60%,#1c2233 100%);bo
   <div id="stats-cards"></div>
 
   <!-- SHARE CARD PREVIEW -->
-  <div id="share-card" style="margin-top:20px;background:linear-gradient(135deg,#0e1118,#1c2233);border-radius:16px;padding:24px;font-family:'Barlow',sans-serif;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:10px">
-      <span style="font-size:28px">⚽</span>
+  <div id="share-card" style="margin-top:20px;background:#161b27;overflow:hidden;font-family:'Barlow',sans-serif;">
+    <div style="background:linear-gradient(135deg,#0e1118,#1c2233);padding:14px 20px;display:flex;align-items:center;gap:12px;border-bottom:2px solid #c93b2a">
+      <span style="font-size:30px;line-height:1">⚽</span>
       <div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#d4c9a8;letter-spacing:1px">JAT CROMOS</div>
-        <div style="font-size:11px;color:#8e97b0;letter-spacing:2px">PANINI FIFA WORLD CUP 2026</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#d4c9a8;letter-spacing:1px;line-height:1">JAT CROMOS</div>
+        <div style="font-size:10px;color:#8e97b0;letter-spacing:2px;margin-top:2px">PANINI FIFA WORLD CUP 2026</div>
       </div>
     </div>
-    <div id="share-card-body"></div>
-
+    <div id="share-card-body" style="padding:0 20px 4px"></div>
   </div>
 
   <div style="display:flex;gap:10px;margin-top:14px">
@@ -919,14 +914,27 @@ function renderStats(){
   // Share card
   const body = document.getElementById('share-card-body');
   const missing = s.TOTAL - s.unique;
-  body.innerHTML = `
-    <div class="sc-row"><span class="sc-label">👤 Collector</span><div><div class="sc-val">${myName}</div></div></div>
-    <div class="sc-row"><span class="sc-label">✅ Unique stickers</span><div><div class="sc-val">${s.unique} / ${s.TOTAL}</div><div class="sc-sub">${s.completion}% complete</div></div></div>
-    <div class="sc-row"><span class="sc-label">✨ Shinies</span><div><div class="sc-val">${s.shinies} / ${s.totalShinies}</div></div></div>
-    <div class="sc-row"><span class="sc-label">⭐ Duplicates</span><div><div class="sc-val">${s.extras}</div><div class="sc-sub">${s.totalCopies} total copies</div></div></div>
-    <div class="sc-row"><span class="sc-label">🃏 Packs opened</span><div><div class="sc-val">${s.packsOpened}</div><div class="sc-sub">+4 with album</div></div></div>
-    <div class="sc-row"><span class="sc-label">💸 Money spent</span><div><div class="sc-val" style="color:var(--accent)">${s.moneySpent.toFixed(2)}€</div><div class="sc-sub">missing ~${Math.ceil(missing/7)} more packs</div></div></div>
-  `;
+  const row = (emoji, label, val, sub='') => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+      <span style="font-size:13px;color:#8e97b0">${emoji} ${label}</span>
+      <div style="text-align:right;min-width:0">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:17px;color:#f0ede6;line-height:1.1;white-space:nowrap">${val}</div>
+        ${sub?`<div style="font-size:10px;color:#4e576e;line-height:1.2;white-space:nowrap">${sub}</div>`:''}
+      </div>
+    </div>`;
+  body.innerHTML =
+    row('👤','Collector', myName) +
+    row('✅','Unique stickers', `${s.unique} / ${s.TOTAL}`, `${s.completion}% complete`) +
+    row('✨','Shinies', `${s.shinies} / ${s.totalShinies}`) +
+    row('⭐','Duplicates', s.extras, `${s.totalCopies} total copies`) +
+    row('🃏','Packs opened', s.packsOpened, '+4 with album') +
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0">
+      <span style="font-size:13px;color:#8e97b0">💸 Money spent</span>
+      <div style="text-align:right">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:17px;color:#c93b2a;line-height:1.1">${s.moneySpent.toFixed(2)}€</div>
+        <div style="font-size:10px;color:#4e576e">~${Math.ceil(missing/7)} more packs to finish</div>
+      </div>
+    </div>`;
 }
 
 window.shareStats = function(){} // kept for compat
@@ -935,13 +943,18 @@ window.shareStatsImg = async function(){
   showToast('Generating image…');
   const card = document.getElementById('share-card');
   try{
+    // Temporarily remove border-radius for clean rectangular image
+    const origRadius = card.style.borderRadius;
+    card.style.borderRadius = '0';
     const canvas = await html2canvas(card, {
-      backgroundColor: '#0e1118',
+      backgroundColor: '#161b27',
       scale: 3,
       useCORS: true,
       logging: false,
-      removeContainer: true
+      width: card.offsetWidth,
+      height: card.offsetHeight
     });
+    card.style.borderRadius = origRadius;
     canvas.toBlob(async blob => {
       if(!blob) return;
       const file = new File([blob], 'jat-cromos-stats.png', {type:'image/png'});
