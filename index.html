@@ -362,6 +362,7 @@ header{background:linear-gradient(135deg,#0e1118 0%,#161b27 60%,#1c2233 100%);bo
         <button class="fb" data-f="mis" onclick="setF(this,'mis')">Missing</button>
       </div>
       <button class="fb vb" id="vb" onclick="toggleV()">⊞</button>
+      <button class="fb" onclick="shareDuplicates()" style="white-space:nowrap">📋 Share Dupes</button>
     </div>
     <div class="secs" id="root"></div>
   </div>
@@ -801,6 +802,47 @@ document.getElementById('name-modal').addEventListener('keydown',e=>{
 });
 
 // ── BOOT ───────────────────────────────────────────────────────────────────
+// ── SHARE DUPLICATES ──────────────────────────────────────────────────────
+window.shareDuplicates = function(){
+  // Group duplicates by team section
+  const bySection = {};
+  ALBUM.forEach(sec => {
+    const dups = [];
+    sec.s.forEach(s => {
+      const v = col[s.c] || 0;
+      if(v >= 2){
+        // Extract the number from the code (e.g. MAR11 -> 11)
+        const num = s.c.replace(sec.id, '').replace(/^0+/,'') || s.c;
+        // Add with count if more than 2 copies
+        dups.push(v > 2 ? `${num}(×${v-1})` : num);
+      }
+    });
+    if(dups.length > 0){
+      bySection[sec.id] = { flag: sec.name.split(' ')[0], dups };
+    }
+  });
+
+  if(Object.keys(bySection).length === 0){
+    showToast('No duplicates to share!');
+    return;
+  }
+
+  let text = '⚽ Panini FIFA World Cup 2026\nDuplicates available:\n\n';
+  Object.entries(bySection).forEach(([id, {flag, dups}]) => {
+    text += `${id} ${flag}: ${dups.join(', ')}\n`;
+  });
+  text += `\n— JAT Cromos`;
+
+  // Try native share first (mobile), fallback to clipboard
+  if(navigator.share){
+    navigator.share({ text }).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(text)
+      .then(()=>showToast('Copied to clipboard! ✓'))
+      .catch(()=>showToast('Could not copy'));
+  }
+}
+
 if(myUserId && myGroupId && myName){
   startApp();
 } else {
