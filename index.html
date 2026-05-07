@@ -289,6 +289,23 @@ header{background:linear-gradient(135deg,#0e1118 0%,#161b27 60%,#1c2233 100%);bo
   .pw{padding:0 10px !important}
   .tb{padding:0 10px !important}
 }
+
+/* STATS VIEW */
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.stat-block{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.stat-block .sb-val{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1;margin-bottom:4px}
+.stat-block .sb-lbl{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.stat-block .sb-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.stat-block.accent{border-color:rgba(201,59,42,0.4);background:rgba(201,59,42,0.08)}
+.stat-block.blue{border-color:rgba(74,143,212,0.4);background:rgba(74,143,212,0.08)}
+.stat-block.gold{border-color:var(--gold-b);background:var(--gold-dim)}
+.stat-block.green{border-color:var(--green-b);background:var(--green-dim)}
+/* share card inner rows */
+.sc-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.sc-row:last-child{border-bottom:none}
+.sc-label{font-size:13px;color:#8e97b0}
+.sc-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#f0ede6}
+.sc-sub{font-size:11px;color:#4e576e;margin-top:1px;text-align:right}
 </style>
 </head>
 <body>
@@ -333,6 +350,7 @@ header{background:linear-gradient(135deg,#0e1118 0%,#161b27 60%,#1c2233 100%);bo
     <div class="tabs">
       <div class="tab active" id="tab-my" onclick="showTab('my')">My Collection</div>
       <div class="tab" id="tab-friends" onclick="showTab('friends')">Friends</div>
+      <div class="tab" id="tab-stats" onclick="showTab('stats')">📊 Stats</div>
     </div>
   </header>
 
@@ -391,6 +409,28 @@ header{background:linear-gradient(135deg,#0e1118 0%,#161b27 60%,#1c2233 100%);bo
       <button class="bp" onclick="saveNameModal()">Save</button>
     </div>
   </div>
+</div>
+
+<!-- STATS VIEW -->
+<div id="stats-view" style="display:none;max-width:600px;margin:24px auto 50px;padding:0 20px">
+
+  <!-- STAT CARDS -->
+  <div id="stats-cards"></div>
+
+  <!-- SHARE CARD PREVIEW -->
+  <div id="share-card" style="margin-top:20px;background:linear-gradient(135deg,#0e1118,#1c2233);border:1px solid rgba(74,143,212,0.3);border-radius:16px;padding:24px;font-family:'Barlow',sans-serif">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:14px">
+      <span style="font-size:28px">⚽</span>
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#d4c9a8;letter-spacing:1px">JAT CROMOS</div>
+        <div style="font-size:11px;color:#8e97b0;letter-spacing:2px">PANINI FIFA WORLD CUP 2026</div>
+      </div>
+    </div>
+    <div id="share-card-body"></div>
+    <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);font-size:11px;color:#4e576e;text-align:center">cromos-jat.netlify.app</div>
+  </div>
+
+  <button onclick="shareStats()" style="width:100%;margin-top:14px;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif">📤 Share Stats</button>
 </div>
 
 <div class="sync" id="sync"><div class="sync-dot"></div><span id="sync-txt">Saving…</span></div>
@@ -702,8 +742,11 @@ window.renderMy = function renderMy(){
 window.showTab = function(tab){
   document.getElementById('tab-my').classList.toggle('active', tab==='my');
   document.getElementById('tab-friends').classList.toggle('active', tab==='friends');
+  document.getElementById('tab-stats').classList.toggle('active', tab==='stats');
   document.getElementById('my-view').style.display = tab==='my'?'block':'none';
   document.getElementById('friends-view').style.display = tab==='friends'?'block':'none';
+  document.getElementById('stats-view').style.display = tab==='stats'?'block':'none';
+  if(tab==='stats') renderStats();
 }
 
 function renderFriends(){
@@ -802,6 +845,111 @@ document.getElementById('name-modal').addEventListener('keydown',e=>{
 });
 
 // ── BOOT ───────────────────────────────────────────────────────────────────
+// ── STATS ─────────────────────────────────────────────────────────────────
+function calcStats(){
+  // Shinies = FWC stickers + team logo (XX1) stickers
+  const shinyIds = new Set();
+  ALBUM.forEach(sec => {
+    sec.s.forEach(s => {
+      const isFWC = sec.id === 'FWC' || sec.id === 'FIFA';
+      const isLogo = s.l === 'Team Logo';
+      if(isFWC || isLogo) shinyIds.add(s.c);
+    });
+  });
+
+  let unique=0, totalCopies=0, shinies=0, extras=0;
+  for(const [c,v] of Object.entries(col)){
+    if(v>=1){ unique++; totalCopies+=v; if(shinyIds.has(c)) shinies++; }
+    if(v>=2) extras+=(v-1);
+  }
+
+  const ALBUM_PACKS = 4;
+  const ALBUM_COST = 5;
+  const PACK_SIZE = 7;
+  const PACK_COST = 1.5;
+
+  const packsOpened = Math.max(0, Math.round((totalCopies - ALBUM_PACKS*PACK_SIZE) / PACK_SIZE));
+  const moneySpent = ALBUM_COST + (packsOpened * PACK_COST);
+  const completion = TOTAL ? Math.round(unique/TOTAL*100) : 0;
+  const totalShinies = shinyIds.size;
+
+  return { unique, totalCopies, shinies, totalShinies, extras, packsOpened, moneySpent, completion, TOTAL };
+}
+
+function renderStats(){
+  const s = calcStats();
+  const cards = document.getElementById('stats-cards');
+  cards.innerHTML = `
+    <div class="stat-row">
+      <div class="stat-block green">
+        <div class="sb-val" style="color:var(--green)">${s.unique}</div>
+        <div class="sb-lbl">Unique Stickers</div>
+        <div class="sb-sub">${s.completion}% complete</div>
+      </div>
+      <div class="stat-block gold">
+        <div class="sb-val" style="color:var(--gold)">${s.extras}</div>
+        <div class="sb-lbl">Duplicates</div>
+        <div class="sb-sub">${s.totalCopies} total copies</div>
+      </div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-block blue">
+        <div class="sb-val" style="color:var(--blue)">${s.shinies}</div>
+        <div class="sb-lbl">✨ Shinies</div>
+        <div class="sb-sub">${s.totalShinies} total shinies</div>
+      </div>
+      <div class="stat-block" style="border-color:rgba(232,200,74,0.3);background:rgba(232,200,74,0.05)">
+        <div class="sb-val" style="color:#d4c9a8">${s.packsOpened}</div>
+        <div class="sb-lbl">Packs Opened</div>
+        <div class="sb-sub">+4 with album</div>
+      </div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-block accent" style="grid-column:1/-1">
+        <div class="sb-val" style="color:var(--accent);font-size:42px">${s.moneySpent.toFixed(2)}€</div>
+        <div class="sb-lbl">Total Spent</div>
+        <div class="sb-sub">5€ album + ${s.packsOpened} × 1.50€</div>
+      </div>
+    </div>
+  `;
+
+  // Share card
+  const body = document.getElementById('share-card-body');
+  const missing = s.TOTAL - s.unique;
+  body.innerHTML = `
+    <div class="sc-row"><span class="sc-label">👤 Collector</span><div><div class="sc-val">${myName}</div></div></div>
+    <div class="sc-row"><span class="sc-label">✅ Unique stickers</span><div><div class="sc-val">${s.unique} / ${s.TOTAL}</div><div class="sc-sub">${s.completion}% complete</div></div></div>
+    <div class="sc-row"><span class="sc-label">✨ Shinies</span><div><div class="sc-val">${s.shinies} / ${s.totalShinies}</div></div></div>
+    <div class="sc-row"><span class="sc-label">⭐ Duplicates</span><div><div class="sc-val">${s.extras}</div><div class="sc-sub">${s.totalCopies} total copies</div></div></div>
+    <div class="sc-row"><span class="sc-label">🃏 Packs opened</span><div><div class="sc-val">${s.packsOpened}</div><div class="sc-sub">+4 with album</div></div></div>
+    <div class="sc-row"><span class="sc-label">💸 Money spent</span><div><div class="sc-val" style="color:var(--accent)">${s.moneySpent.toFixed(2)}€</div><div class="sc-sub">missing ~${Math.ceil(missing/7)} more packs</div></div></div>
+  `;
+}
+
+window.shareStats = function(){
+  const s = calcStats();
+  const missing = s.TOTAL - s.unique;
+  const text = `⚽ Panini FIFA World Cup 2026
+JAT Cromos — ${myName}
+
+✅ ${s.unique}/${s.TOTAL} unique (${s.completion}%)
+✨ ${s.shinies}/${s.totalShinies} shinies
+⭐ ${s.extras} duplicates
+🃏 ${s.packsOpened} packs opened (+4 with album)
+💸 ${s.moneySpent.toFixed(2)}€ spent
+📦 ~${Math.ceil(missing/7)} more packs to complete
+
+cromos-jat.netlify.app`;
+
+  if(navigator.share){
+    navigator.share({text}).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(text)
+      .then(()=>showToast('Copied! ✓'))
+      .catch(()=>showToast('Could not copy'));
+  }
+}
+
 // ── SHARE DUPLICATES ──────────────────────────────────────────────────────
 window.shareDuplicates = function(){
   // Group duplicates by team section
