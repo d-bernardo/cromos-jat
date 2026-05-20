@@ -428,6 +428,7 @@ header{background:linear-gradient(135deg,#0e1118 0%,#161b27 60%,#1c2233 100%);bo
   <div style="display:flex;gap:10px;margin-top:14px">
     <button onclick="shareStatsImg()" style="flex:1;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif">🖼️ Share Stats</button>
     <button onclick="shareDuplicates()" style="flex:1;padding:13px;background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif">📋 Share Dupes</button>
+    <button onclick="shareMissing()" style="flex:1;padding:13px;background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif">❌ Share Missing</button>
   </div>
 </div>
 
@@ -973,6 +974,42 @@ window.shareStatsImg = async function(){
   } catch(e){
     console.error(e);
     showToast('Could not generate image');
+  }
+}
+
+// ── SHARE MISSING ─────────────────────────────────────────────────────────
+window.shareMissing = function(){
+  const bySection = {};
+  ALBUM.forEach(sec => {
+    const miss = [];
+    sec.s.forEach(s => {
+      if(!col[s.c]) {
+        const num = s.c.replace(sec.id, '').replace(/^0+/,'') || s.c;
+        miss.push(num);
+      }
+    });
+    if(miss.length > 0 && miss.length < sec.s.length){ // skip fully missing teams
+      bySection[sec.id] = { flag: sec.name.split(' ')[0], miss };
+    }
+  });
+
+  if(Object.keys(bySection).length === 0){
+    showToast('Collection complete! 🎉');
+    return;
+  }
+
+  let text = '⚽ Panini FIFA World Cup 2026\nMissing stickers:\n\n';
+  Object.entries(bySection).forEach(([id, {flag, miss}]) => {
+    text += `${id} ${flag}: ${miss.join(', ')}\n`;
+  });
+  text += `\n— JAT Cromos`;
+
+  if(navigator.share){
+    navigator.share({ text }).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(text)
+      .then(()=>showToast('Copied to clipboard! ✓'))
+      .catch(()=>showToast('Could not copy'));
   }
 }
 
